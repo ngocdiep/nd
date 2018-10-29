@@ -1,0 +1,13 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "migrate-db": "flyway -configFiles=flyway/flyway.conf migrate",
+    "start": "npm run migrate-db && postgraphile --connection postgres://nd_postgraphile:Abcd1234@localhost:5432/nd --schema nd --default-role nd_anonymous --secret nd_keyboard_kitten --token nd.jwt_token"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
