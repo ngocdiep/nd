@@ -1,8 +1,8 @@
 begin;
  
  
--- create schema nd;
--- create schema nd_private;
+create schema nd;
+create schema nd_private;
  
 create table nd.person (
   id               serial primary key,
