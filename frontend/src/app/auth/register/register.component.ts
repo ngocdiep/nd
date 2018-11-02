@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ModalService } from 'src/app/core/services/modal.service';
 import { UserService } from '../shared/user.service';
-import { Observable } from 'apollo-link';
+import { SampleComponent } from 'src/app/shared/sample/sample.component';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) { }
 
   ngOnInit() {
@@ -49,5 +51,13 @@ export class RegisterComponent implements OnInit {
 
   onShowInfo() {
     console.log('s');
+  }
+
+  initLoginModal() {
+    const inputs = {
+      isMobile: false
+    };
+
+    this.modalService.init(SampleComponent, inputs, {});
   }
 }

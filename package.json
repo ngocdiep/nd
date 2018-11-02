@@ -1,0 +1,14 @@
+{
+    "name": "nd",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+      "start-backend": "cd backend && npm start",
+      "start-frontend": "cd frontend && npm start"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {},
+    "devDependencies": {}
+  }
+  
