@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
+import { Observable } from 'apollo-link';
 
 @Component({
   selector: 'app-register',
@@ -8,11 +10,13 @@ import { UserService } from '../shared/user.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  errors: string[];
   registerForm: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -28,7 +32,19 @@ export class RegisterComponent implements OnInit {
 
   onSubmit() {
     console.log(this.registerForm);
-
+    this.userService.registerPersonAndSignIn(this.registerForm.value).subscribe(
+      result => {
+        if (!result.errors) {
+          this.router.navigateByUrl('');
+        } else {
+          this.errors = (<Array<any>>result.errors).map(e => {
+            return e.message;
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      });
   }
 
   onShowInfo() {

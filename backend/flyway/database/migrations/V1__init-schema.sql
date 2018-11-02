@@ -171,8 +171,35 @@ begin
   return person;
 end;
 $$ language plpgsql strict security definer;
- 
+
 comment on function nd.register_person(text, text, text, text) is 'Registers a single user and creates an account in our application.';
+
+create type nd.jwt_token as (
+  role text,
+  person_id integer
+);
+
+create function nd.register_person_and_sign_in(
+  first_name text,
+  last_name text,
+  email text,
+  password text
+) returns nd.jwt_token as $$
+declare
+  person nd.person;
+begin
+  insert into nd.person (first_name, last_name) values
+    (first_name, last_name)
+    returning * into person;
+ 
+  insert into nd_private.person_account (person_id, email, password_hash) values
+    (person.id, email, crypt(password, gen_salt('bf')));
+ 
+  return nd.authenticate(email, password);
+end;
+$$ language plpgsql strict security definer;
+ 
+comment on function nd.register_person_and_sign_in(text, text, text, text) is 'Registers a single user, creates an account in our application and then sign in this user immediately.';
  
 create role nd_postgraphile login password 'Abcd1234';
  
@@ -181,11 +208,6 @@ grant nd_anonymous to nd_postgraphile;
  
 create role nd_person;
 grant nd_person to nd_postgraphile;
- 
-create type nd.jwt_token as (
-  role text,
-  person_id integer
-);
  
 create function nd.authenticate(
   email text,
@@ -233,6 +255,7 @@ grant execute on function nd.authenticate(text, text) to nd_anonymous, nd_person
 grant execute on function nd.current_person() to nd_anonymous, nd_person;
  
 grant execute on function nd.register_person(text, text, text, text) to nd_anonymous;
+grant execute on function nd.register_person_and_sign_in(text, text, text, text) to nd_anonymous;
  
 alter table nd.person enable row level security;
 alter table nd.post enable row level security;

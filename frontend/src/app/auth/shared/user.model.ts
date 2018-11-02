@@ -1,5 +1,9 @@
 export class User {
-    email: string;
-    password: string;
-    passwordRepeat: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string;
+
+    fullName(): string {
+        return (this.firstName ? (this.firstName + ' ') : '' + this.lastName ? this.lastName : '').trim();
+    }
 }
