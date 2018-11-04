@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start-db": "docker-compose up -d",
+    "start-db": "docker-compose up -d --build",
     "migrate-db": "flyway -configFiles=flyway/flyway.conf migrate",
-    "start": "npm run start-db && npm run migrate-db && postgraphile --cors -c postgres://nd_postgraphile:Abcd1234@localhost:5433/nd -s nd,nd_private --default-role nd_anonymous --secret nd_keyboard_kitten --token nd.jwt_token --include-extension-resources true",
+    "start": "npm run start-db && npm run migrate-db && postgraphile --cors -c postgres://nd_postgraphile:Abcd1234@localhost:5433/nd -s nd,nd_private --default-role nd_anonymous --secret nd_keyboard_kitten --token nd.jwt_token --extended-errors detail,code",
     "start-local": "postgraphile -c postgres://forum_example_postgraphile:xyz@localhost:5432/nd -s forum_example,forum_example_private --default-role forum_example_anonymous --secret nd_keyboard_kitten --token forum_example.jwt_token --include-extension-resources true"
   },
   "author": "",
