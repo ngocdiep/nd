@@ -85,7 +85,13 @@ button {
 button:hover {
     opacity: 1;
 }
-
+button:disabled {
+    opacity: 0.9;
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
 /* Extra styles for the cancel button */
 
 .cancelbtn {

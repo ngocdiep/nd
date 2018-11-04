@@ -7,3 +7,10 @@ body {
 * {
     box-sizing: border-box
 }
+
+.form-error {
+    border: 1px solid red;
+    background: #ffebe8;
+    padding: 5px;
+    margin: 10px 0;
+}

@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { PostsModule } from './posts/posts.module';
-import { HomeModule } from './home/home.module';
+import { RouterModule, Routes } from '@angular/router';
 import { AuthModule } from './auth/auth.module';
+import { HomeModule } from './home/home.module';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { PostsModule } from './posts/posts.module';
 
 const routes: Routes = [
   {
@@ -12,6 +13,10 @@ const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => AuthModule
+  },
+  {
+    path: 'password-reset',
+    component: PasswordResetComponent
   },
   {
     path: 'post',

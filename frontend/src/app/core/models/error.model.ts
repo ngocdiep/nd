@@ -1,3 +1,4 @@
 export interface Error {
-    messages: { [key: string]: string };
+    field: string;
+    messages: [string];
 }

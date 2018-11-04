@@ -6,11 +6,13 @@ import { AppComponent } from './app.component';
 import { GraphQLModule } from './graphql.module';
 import { SampleComponent } from './shared/sample/sample.component';
 import { SharedModule } from './shared/shared.module';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PasswordResetComponent,
   ],
   imports: [
     BrowserModule,

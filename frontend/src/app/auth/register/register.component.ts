@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { UserService } from '../shared/user.service';
 import { SampleComponent } from 'src/app/shared/sample/sample.component';
+import { Error } from 'src/app/core';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,8 @@ import { SampleComponent } from 'src/app/shared/sample/sample.component';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  errors: string[];
+  isEmailExisted = false;
+  errors: string[] = [];
   registerForm: FormGroup;
 
   constructor(
@@ -33,20 +35,44 @@ export class RegisterComponent implements OnInit {
   get f() { return this.registerForm.controls; }
 
   onSubmit() {
-    console.log(this.registerForm);
+    this.resetStatus();
+    if (!this.validate()) {
+      return;
+    }
     this.userService.registerPersonAndSignIn(this.registerForm.value).subscribe(
       result => {
         if (!result.errors) {
           this.router.navigateByUrl('');
         } else {
-          this.errors = (<Array<any>>result.errors).map(e => {
-            return e.message;
+          const t = (<Array<any>>result.errors).map(err => {
+            if (err.code === '23505') {
+              this.isEmailExisted = true;
+            } else {
+              this.errors.push(err.message);
+            }
           });
         }
       },
       err => {
         console.log(err);
       });
+  }
+
+  resetStatus() {
+    this.isEmailExisted = false;
+    this.errors = [];
+  }
+
+  validate() {
+    if (this.registerForm.value.password !== this.registerForm.value.passwordRepeat) {
+      this.errors.push('Password does not match the confirm password.');
+    }
+
+    return this.errors.length > 0;
+  }
+
+  hasError() {
+    return this.isEmailExisted || this.errors.length > 0;
   }
 
   onShowInfo() {
