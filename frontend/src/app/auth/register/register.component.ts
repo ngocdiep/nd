@@ -68,7 +68,7 @@ export class RegisterComponent implements OnInit {
       this.errors.push('Password does not match the confirm password.');
     }
 
-    return this.errors.length > 0;
+    return this.errors.length === 0;
   }
 
   hasError() {
