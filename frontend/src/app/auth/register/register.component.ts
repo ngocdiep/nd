@@ -44,7 +44,7 @@ export class RegisterComponent implements OnInit {
         if (!result.errors) {
           this.router.navigateByUrl('');
         } else {
-          const t = (<Array<any>>result.errors).map(err => {
+          (<Array<any>>result.errors).map(err => {
             if (err.code === '23505') {
               this.isEmailExisted = true;
             } else {

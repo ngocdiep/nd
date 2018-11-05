@@ -1,3 +1,36 @@
-<p>
-  login works!
-</p>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div class="container">
+    <h1>Sign In</h1>
+    <hr>
+    <div *ngIf="hasError()" class="form-error">
+      <div *ngFor="let error of errors">
+        {{error}}
+      </div>
+    </div>
+    <div #showValidationMessageEmail>
+      <label for="email"><b>Email</b></label>
+      <input #emailInput type="email" placeholder="Enter Email" id="email" formControlName="email" required [ngClass]="{focus: showValidationMessageEmail.value}"
+        (focus)="showValidationMessageEmail.value = true" (focusout)="showValidationMessageEmail.value = false">
+      <i *ngIf="!showValidationMessageEmail.value && f.email.touched && f.email.errors" class="fas fa-info-circle"
+        (click)="emailInput.focus()"></i>
+      <div *ngIf="showValidationMessageEmail.value && f.email.touched && f.email.errors" class="contextualLayerPositioner">
+        Enter a valid email
+      </div>
+    </div>
+    <div #showValidationMessagePassword>
+      <label for="password"><b>Password</b></label>
+      <input #passwordInput type="password" placeholder="Enter Password" id="password" formControlName="password"
+        required [ngClass]="{focus: showValidationMessagePassword.value}" (focus)="showValidationMessagePassword.value = true"
+        (focusout)="showValidationMessagePassword.value = false">
+      <i *ngIf="!showValidationMessagePassword.value && f.password.touched && f.password.errors" class="fas fa-info-circle"
+        (click)="passwordInput.focus()"></i>
+      <div *ngIf="showValidationMessagePassword.value && f.password.touched && f.password.errors" class="contextualLayerPositioner">
+        Enter a valid password
+      </div>
+    </div>
+
+    <div class="clearfix">
+      <button [disabled]="loginForm.invalid" type="submit" class="signupbtn">Sign In</button>
+    </div>
+  </div>
+</form>
