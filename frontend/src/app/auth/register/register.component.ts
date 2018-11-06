@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/core/services/modal.service';
-import { UserService } from '../shared/user.service';
 import { SampleComponent } from 'src/app/shared/sample/sample.component';
-import { Error } from 'src/app/core';
+import { UserService } from '../shared/user.service';
 
 @Component({
   selector: 'app-register',

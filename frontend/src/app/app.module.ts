@@ -7,6 +7,7 @@ import { GraphQLModule } from './graphql.module';
 import { SampleComponent } from './shared/sample/sample.component';
 import { SharedModule } from './shared/shared.module';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { CoreModule } from './core/core.module';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { PasswordResetComponent } from './password-reset/password-reset.componen
     AppRoutingModule,
     GraphQLModule,
     HttpClientModule,
+    CoreModule,
     SharedModule
   ],
   providers: [],

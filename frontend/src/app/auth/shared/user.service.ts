@@ -3,9 +3,8 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { User } from './user.model';
 import { TokenService } from 'src/app/core/services/token.service';
-import { Observable } from 'apollo-link';
+import { User } from './user.model';
 
 const registerPersonAndSignIn = gql`
 mutation registerPersonAndSignIn($firstName: String!, $lastName: String!, $email: String!, $password: String!) {
@@ -103,12 +102,18 @@ export class UserService {
     ).valueChanges.subscribe(result => {
       console.log(result);
 
-      // const user = new User();
+      const user = new User();
       // user.firstName = result.data.currentPerson.firstName;
       // user.lastName = result.data.currentPerson.lastName;
 
-      // this.setAuth(user);
+      this.setAuth(user);
     });
+  }
+
+  logOut() {
+    this.currentUserSubject.next({} as User);
+    this.isAuthenticatedSubject.next(false);
+    this.tokenService.destroyToken();
   }
 
 }

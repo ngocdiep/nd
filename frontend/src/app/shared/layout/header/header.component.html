@@ -1,2 +1,31 @@
-<a routerLink="/auth/register">Register</a>
-<a routerLink="/auth/login">Login</a>
+<div class='content-wrapper' #header>
+  <div id='toolbar'>
+    <div class="left">
+      <a routerLink='/' title='Home'>
+        <span>Home</span>
+      </a>
+      <a routerLink='/top' title='Top'>
+        <span>Top</span>
+      </a>
+      <form id="search-form" (ngSubmit)="onSubmit()" #searchForm="ngForm">
+        <input type='text' name="search-string" placeholder='Search here...' size='15' [(ngModel)]="model.searchString" />
+        <input type='submit' id="submit-button" value='Search' />
+      </form>
+    </div>
+    <div class="right">
+      <a *ngIf="isAuthenticated" routerLink='/post/create' title='+ New Post'>
+        <span>+ New Post</span>
+      </a>
+      <a *ngIf="!isAuthenticated" routerLink='/auth/register' title='Register'>
+        <span>Register</span>
+      </a>
+      <span> | </span>
+      <a *ngIf="!isAuthenticated" routerLink='/auth/login' title='Login'>
+        <span>Login</span>
+      </a>
+      <a *ngIf="isAuthenticated" href="javascript:void(0)" (click)="onLogOut()" title='Logout'>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+</div>
