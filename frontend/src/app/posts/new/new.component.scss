@@ -1,0 +1,120 @@
+/* Full-width input fields */
+
+form {
+    margin: 0 auto;
+    .container {
+        /* Add padding to container elements */
+        padding: 16px;
+        align-content: center;
+        hr {
+            border: 1px solid #f1f1f1;
+            margin-bottom: 25px;
+        }
+        >div {
+            position: relative;
+            input {
+                width: 100%;
+                padding: 15px;
+                margin: 5px 0 22px 0;
+                display: inline-block;
+                border: none;
+                border-radius: 6px;
+                background: #f1f1f1;
+            }
+            input:focus {
+                background-color: #ddd;
+                outline: none;
+            }
+            input:not(.ng-untouched):not(.focus).ng-invalid {
+                border: 1px solid #f44336;
+            }
+            i {
+                position: relative;
+                z-index: 1;
+                left: -25px;
+                top: 1px;
+                color: #f44336;
+                cursor: pointer;
+                width: 0;
+            }
+            .contextualLayerPositioner {
+                max-width: 500px;
+                background-color: #f44336;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 5px;
+                position: absolute;
+                z-index: 1;
+                right: 0;
+                bottom: 75px;
+            }
+            .contextualLayerPositioner::after {
+                content: " ";
+                position: absolute;
+                top: 100%;
+                /* At the bottom of the tooltip */
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #f44336 transparent transparent transparent;
+            }
+        }
+    }
+}
+
+/* Set a style for all buttons */
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+}
+
+button:hover {
+    opacity: 1;
+}
+button:disabled {
+    opacity: 0.9;
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+/* Extra styles for the cancel button */
+
+.cancelbtn {
+    padding: 14px 20px;
+    background-color: #f44336;
+}
+
+/* Float cancel and signup buttons and add an equal width */
+
+.cancelbtn,
+.signupbtn {
+    float: left;
+    width: 50%;
+}
+
+/* Clear floats */
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+
+@media screen and (max-width: 300px) {
+    .cancelbtn,
+    .signupbtn {
+        width: 100%;
+    }
+}

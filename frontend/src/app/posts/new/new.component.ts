@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UserService } from 'src/app/auth/shared/user.service';
+import { PostService } from '../shared/post.service';
 
 @Component({
   selector: 'app-new',
@@ -6,10 +10,54 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./new.component.scss']
 })
 export class NewComponent implements OnInit {
-
-  constructor() { }
+  authorId: number;
+  loginForm: FormGroup;
+  errors: string[] = [];
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: UserService,
+    private postService: PostService,
+    private router: Router,
+  ) { }
 
   ngOnInit() {
+    this.loginForm = this.formBuilder.group({
+      title: ['', [Validators.required]],
+      content: ['', [Validators.required]],
+    });
+
+    this.userService.currentUser.subscribe(user => {
+      this.authorId = user.id;
+    });
   }
+
+  // convenience getter for easy access to form fields
+  get f() { return this.loginForm.controls; }
+
+  onSubmit() {
+    this.resetStatus();
+    this.postService.createPost(this.loginForm.value, this.authorId).subscribe(
+      result => {
+        if (!result.errors) {
+          this.router.navigateByUrl('');
+        } else {
+          (<Array<any>>result.errors).map(err => {
+            this.errors.push(err.message);
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
+  resetStatus() {
+    this.errors = [];
+  }
+
+  hasError() {
+    return this.errors.length > 0;
+  }
+
 
 }

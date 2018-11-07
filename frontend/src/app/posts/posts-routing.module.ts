@@ -5,7 +5,7 @@ import { NewComponent } from './new/new.component';
 
 const routes: Routes = [
   {
-    path: 'new',
+    path: 'create',
     component: NewComponent
   },
   {

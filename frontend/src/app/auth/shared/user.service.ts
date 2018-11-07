@@ -25,6 +25,7 @@ mutation authenticate($email: String!, $password: String!) {
 const currentUser = gql`
 query {
   currentPerson {
+    id,
     firstName,
     lastName,
     fullName,
@@ -103,9 +104,9 @@ export class UserService {
       console.log(result);
 
       const user = new User();
-      // user.firstName = result.data.currentPerson.firstName;
-      // user.lastName = result.data.currentPerson.lastName;
-
+      user.firstName = result.data['currentPerson'].firstName;
+      user.lastName = result.data['currentPerson'].lastName;
+      user.id = result.data['currentPerson'].id;
       this.setAuth(user);
     });
   }
