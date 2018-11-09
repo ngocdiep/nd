@@ -37,7 +37,7 @@ query {
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class AuthService {
 
   private currentUserSubject = new BehaviorSubject<User>({} as User);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
@@ -73,6 +73,7 @@ export class UserService {
   }
 
   authenticate(input: any) {
+    this.clearAuth();
     return this.apollo.mutate({
       mutation: authenticate,
       variables: {
@@ -80,9 +81,10 @@ export class UserService {
         password: input.password
       }
     }).pipe(map(result => {
-      this.tokenService.saveToken(result.data.authenticate.jwtToken);
-      this.setCurrentUser();
-
+      if (result.data.authenticate.jwtToken) {
+        this.tokenService.saveToken(result.data.authenticate.jwtToken);
+        this.setCurrentUser();
+      }
       return result;
     }));
   }
@@ -96,22 +98,23 @@ export class UserService {
 
   setCurrentUser() {
 
-    return this.apollo.watchQuery(
+    return this.apollo.query(
       {
-        query: currentUser
+        query: currentUser,
+        fetchPolicy: 'no-cache'
       }
-    ).valueChanges.subscribe(result => {
-      console.log(result);
-
-      const user = new User();
-      user.firstName = result.data['currentPerson'].firstName;
-      user.lastName = result.data['currentPerson'].lastName;
-      user.id = result.data['currentPerson'].id;
-      this.setAuth(user);
+    ).subscribe(result => {
+      if (result.data['currentPerson']) {
+        const user = new User();
+        user.firstName = result.data['currentPerson'].firstName;
+        user.lastName = result.data['currentPerson'].lastName;
+        user.id = result.data['currentPerson'].id;
+        this.setAuth(user);
+      }
     });
   }
 
-  logOut() {
+  clearAuth() {
     this.currentUserSubject.next({} as User);
     this.isAuthenticatedSubject.next(false);
     this.tokenService.destroyToken();

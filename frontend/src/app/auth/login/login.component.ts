@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService } from '../shared/user.service';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,11 +13,12 @@ export class LoginComponent implements OnInit {
   errors: string[] = [];
   constructor(
     private formBuilder: FormBuilder,
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
   ) { }
 
   ngOnInit() {
+    this.authService.clearAuth();
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -29,14 +30,12 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     this.resetStatus();
-    this.userService.authenticate(this.loginForm.value).subscribe(
+    this.authService.authenticate(this.loginForm.value).subscribe(
       result => {
-        if (!result.errors) {
+        if (result.data.authenticate.jwtToken) {
           this.router.navigateByUrl('');
         } else {
-          (<Array<any>>result.errors).map(err => {
-            this.errors.push(err.message);
-          });
+          this.errors.push('Email or password is incorrect.');
         }
       },
       err => {

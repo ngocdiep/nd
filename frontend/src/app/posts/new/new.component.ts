@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService } from 'src/app/auth/shared/user.service';
+import { AuthService } from 'src/app/auth/shared/auth.service';
 import { PostService } from '../shared/post.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class NewComponent implements OnInit {
   errors: string[] = [];
   constructor(
     private formBuilder: FormBuilder,
-    private userService: UserService,
+    private authService: AuthService,
     private postService: PostService,
     private router: Router,
   ) { }
@@ -26,7 +26,7 @@ export class NewComponent implements OnInit {
       content: ['', [Validators.required]],
     });
 
-    this.userService.currentUser.subscribe(user => {
+    this.authService.currentUser.subscribe(user => {
       this.authorId = user.id;
     });
   }

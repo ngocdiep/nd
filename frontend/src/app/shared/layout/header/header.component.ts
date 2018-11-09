@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from 'src/app/auth/shared/user.service';
+import { AuthService } from 'src/app/auth/shared/auth.service';
 import { TokenService } from 'src/app/core';
 
 
@@ -20,13 +20,15 @@ export class HeaderComponent implements OnInit {
   model: SearchForm = new SearchForm('');
 
   constructor(
-    private authService: UserService,
+    private authService: AuthService,
     private router: Router,
     private tokenService: TokenService) {
   }
 
   ngOnInit() {
-    this.authService.isAuthenticated.subscribe(rs => this.isAuthenticated = rs);
+    this.authService.isAuthenticated.subscribe(isAuthenticated => {
+      this.isAuthenticated = isAuthenticated;
+    });
   }
 
   onSubmit() {
@@ -35,6 +37,6 @@ export class HeaderComponent implements OnInit {
   }
 
   onLogOut() {
-    this.authService.logOut();
+    this.authService.clearAuth();
   }
 }

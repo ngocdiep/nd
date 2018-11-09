@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from './auth/shared/user.service';
+import { AuthService } from './auth/shared/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +9,10 @@ import { UserService } from './auth/shared/user.service';
 export class AppComponent implements OnInit {
 
   title = 'frontend';
-  constructor(private userService: UserService) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.userService.setCurrentUser();
+    this.authService.setCurrentUser();
   }
 
   removeModal() {

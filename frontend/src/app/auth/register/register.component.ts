@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { SampleComponent } from 'src/app/shared/sample/sample.component';
-import { UserService } from '../shared/user.service';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private userService: UserService,
+    private authService: AuthService,
     private router: Router,
     private modalService: ModalService
   ) { }
@@ -38,7 +38,7 @@ export class RegisterComponent implements OnInit {
     if (!this.validate()) {
       return;
     }
-    this.userService.registerPersonAndSignIn(this.registerForm.value).subscribe(
+    this.authService.registerPersonAndSignIn(this.registerForm.value).subscribe(
       result => {
         if (!result.errors) {
           this.router.navigateByUrl('');
