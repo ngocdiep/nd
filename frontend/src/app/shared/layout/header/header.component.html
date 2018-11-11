@@ -13,7 +13,7 @@
       </form>
     </div>
     <div class="right">
-      <a *ngIf="isAuthenticated" routerLink='/post/create' title='+ New Post'>
+      <a *ngIf="isAuthenticated" routerLink='/posts/create' title='+ New Post'>
         <span>+ New Post</span>
       </a>
       <a *ngIf="!isAuthenticated" routerLink='/auth/register' title='Register'>

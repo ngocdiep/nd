@@ -19,7 +19,7 @@ const routes: Routes = [
     component: PasswordResetComponent
   },
   {
-    path: 'post',
+    path: 'posts',
     loadChildren: () => PostsModule
   }
 ];

@@ -1,0 +1,4 @@
+<div style="max-width: 600px;margin: 0 auto;">
+  <h2>{{(postView | async)?.title}}</h2>
+  <p [innerHTML]="(postView | async)?.content | safeHtml"> </p>
+</div>

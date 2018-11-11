@@ -8,8 +8,9 @@
       </div>
     </div>
     <div #showValidationMessageTitle>
-      <input #titleInput type="title" style="width: 100%" placeholder="Enter Title" id="title" formControlName="title" required [ngClass]="{focus: showValidationMessageTitle.value}"
-        (focus)="showValidationMessageTitle.value = true" (focusout)="showValidationMessageTitle.value = false">
+      <input #titleInput type="title" style="width: 100%" placeholder="Enter Title" id="title" formControlName="title"
+        required [ngClass]="{focus: showValidationMessageTitle.value}" (focus)="showValidationMessageTitle.value = true"
+        (focusout)="showValidationMessageTitle.value = false">
       <i *ngIf="!showValidationMessageTitle.value && f.title.touched && f.title.errors" class="fas fa-info-circle"
         (click)="titleInput.focus()"></i>
       <div *ngIf="showValidationMessageTitle.value && f.title.touched && f.title.errors" class="contextualLayerPositioner">
@@ -17,18 +18,12 @@
       </div>
     </div>
     <div #showValidationMessageContent>
-      <textarea #contentInput style="width: 100%; height: 1000px;" placeholder="Enter Content" id="content" formControlName="content"
-        required [ngClass]="{focus: showValidationMessageContent.value}" (focus)="showValidationMessageContent.value = true"
-        (focusout)="showValidationMessageContent.value = false"></textarea>
-      <i *ngIf="!showValidationMessageContent.value && f.content.touched && f.content.errors" class="fas fa-info-circle"
-        (click)="contentInput.focus()"></i>
-      <div *ngIf="showValidationMessageContent.value && f.content.touched && f.content.errors" class="contextualLayerPositioner">
-        Enter a valid content
-      </div>
+      <quill-editor #contentInput style="width: 100%; height: 1000px;" placeholder="Enter Content" id="content"
+        formControlName="content"></quill-editor>
     </div>
 
     <div class="clearfix">
-      <button [disabled]="loginForm.invalid" type="submit" class="signupbtn">Sign In</button>
+      <button [disabled]="loginForm.invalid" type="submit" class="signupbtn">Save</button>
     </div>
   </div>
 </form>

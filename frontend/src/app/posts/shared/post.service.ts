@@ -6,10 +6,39 @@ import { AuthService } from 'src/app/auth/shared/auth.service';
 import { map } from 'rxjs/operators';
 
 const createPost = gql`
-mutation ($headline: String!, $body: String, $authorId: Int!) {
-  createPost(input: {post: {headline: $headline, body: $body, authorId: $authorId}}) {
+mutation ($title: String!, $content: String, $authorId: Int!) {
+  createPost(input: {post: {title: $title, content: $content, authorId: $authorId}}) {
     post {
       id
+    }
+  }
+}
+`;
+
+const getById = gql`
+query($id: Int!) {
+  postById(id: $id) {
+    title,
+    content
+  }
+}
+`;
+
+const getPage = gql`
+query ($offset: Int, $first: Int) {
+  allPosts(offset: $offset, first: $first) {
+    edges {
+      node {
+        id
+        title
+        content
+      }
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      startCursor
+      endCursor
     }
   }
 }
@@ -29,12 +58,27 @@ export class PostService {
     return this.apollo.mutate({
       mutation: createPost,
       variables: {
-        headline: input.title,
-        body: input.content,
+        title: input.title,
+        content: input.content,
         authorId: authorId
       }
     }).pipe(map(result => {
       return result;
     }));
+  }
+
+  get(id: number) {
+    return this.apollo.query({
+      query: getById,
+      variables: { id: id }
+    });
+  }
+
+  getPage(paging) {
+    return this.apollo.query({
+      query: getPage,
+      variables: { offset: paging.offset, first: paging.first },
+      fetchPolicy: 'no-cache'
+    });
   }
 }

@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { ShowAuthedDirective } from './directives';
 import { HeaderComponent } from './layout/header/header.component';
 import { SampleComponent } from './sample/sample.component';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 @NgModule({
   imports: [
@@ -19,8 +20,9 @@ import { SampleComponent } from './sample/sample.component';
     ReactiveFormsModule,
     RouterModule,
     ShowAuthedDirective,
+    SafeHtmlPipe,
     HeaderComponent
   ],
-  declarations: [SampleComponent, HeaderComponent, ShowAuthedDirective]
+  declarations: [SampleComponent, HeaderComponent, ShowAuthedDirective, SafeHtmlPipe]
 })
 export class SharedModule { }

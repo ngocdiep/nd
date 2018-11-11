@@ -6,15 +6,20 @@ import { NewComponent } from './new/new.component';
 import { PostComponent } from './post/post.component';
 import { PostsRoutingModule } from './posts-routing.module';
 import { ListComponent } from './list/list.component';
-
+import { QuillModule } from 'ngx-quill';
+import { DetailComponent } from './detail/detail.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+    SharedModule,
+    QuillModule,
     PostsRoutingModule
   ],
-  declarations: [PostComponent, NewComponent, ListComponent]
+  exports: [ListComponent],
+  declarations: [PostComponent, NewComponent, ListComponent, DetailComponent]
 })
 export class PostsModule { }

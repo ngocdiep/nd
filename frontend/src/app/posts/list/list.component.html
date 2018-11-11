@@ -1,3 +1,6 @@
-<p>
-  list works!
-</p>
+<div *ngFor="let edge of postListPaging.edges">
+  <h3>{{edge.node.title}}</h3>
+  <div [innerHtml]="edge.node.content | safeHtml"></div>
+
+  <hr>
+</div>

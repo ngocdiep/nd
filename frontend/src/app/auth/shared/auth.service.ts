@@ -63,10 +63,7 @@ export class AuthService {
     }).pipe(map(result => {
       if (result.data && result.data.registerPersonAndSignIn) {
         this.tokenService.saveToken(result.data.registerPersonAndSignIn.jwtToken);
-        const user = new User();
-        user.firstName = input.firstName;
-        user.lastName = input.lastName;
-        this.setAuth(user);
+        this.setCurrentUser();
       }
       return result;
     }));
