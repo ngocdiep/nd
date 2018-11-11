@@ -6,7 +6,7 @@ export interface PostListPaging {
     node: {
       id: number;
       title: string;
-      content: string
+      summary: string
     }
   }];
   totalCount: number;

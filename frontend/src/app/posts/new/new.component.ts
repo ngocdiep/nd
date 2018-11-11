@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/shared/auth.service';
@@ -13,6 +13,7 @@ export class NewComponent implements OnInit {
   authorId: number;
   loginForm: FormGroup;
   errors: string[] = [];
+  @ViewChild('contentInput') contentInput:ElementRef;
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -36,7 +37,8 @@ export class NewComponent implements OnInit {
 
   onSubmit() {
     this.resetStatus();
-    this.postService.createPost(this.loginForm.value, this.authorId).subscribe(
+    console.log(this.contentInput);
+    this.postService.createPost(this.loginForm.value, this.contentInput['editorElem'].innerText, this.authorId).subscribe(
       result => {
         if (!result.errors) {
           this.router.navigateByUrl('');

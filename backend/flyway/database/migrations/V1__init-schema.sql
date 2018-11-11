@@ -45,8 +45,9 @@ CREATE INDEX post_category_parent_id_idx ON nd.post_category (parent_id);
 create table nd.post (
   id               serial primary key,
   author_id        integer not null references nd.person(id),
-  title         text not null check (char_length(title) < 280),
-  content             text,
+  title            text not null check (char_length(title) < 280),
+  content          text,
+  summary         text check (char_length(title) < 300),
   category_id      integer references nd.post_category(id),
   created_at       timestamp default now()
 );
@@ -66,20 +67,7 @@ create function nd.person_full_name(person nd.person) returns text as $$
 $$ language sql stable;
  
 comment on function nd.person_full_name(nd.person) is 'A person’s full name which is a concatenation of their first and last name.';
- 
-create function nd.post_summary(
-  post nd.post,
-  length int default 50,
-  omission text default '…'
-) returns text as $$
-  select case
-    when post.content is null then null
-    else substr(post.content, 0, length) || omission
-  end
-$$ language sql stable;
- 
-comment on function nd.post_summary(nd.post, int, text) is 'A truncated version of the content for summaries.';
- 
+
 create function nd.person_latest_post(person nd.person) returns nd.post as $$
   select post.*
   from nd.post as post
@@ -248,7 +236,6 @@ grant insert, update, delete on table nd.post to nd_person;
 grant usage on sequence nd.post_id_seq to nd_person;
  
 grant execute on function nd.person_full_name(nd.person) to nd_anonymous, nd_person;
-grant execute on function nd.post_summary(nd.post, integer, text) to nd_anonymous, nd_person;
 grant execute on function nd.person_latest_post(nd.person) to nd_anonymous, nd_person;
 grant execute on function nd.search_posts(text) to nd_anonymous, nd_person;
 grant execute on function nd.authenticate(text, text) to nd_anonymous, nd_person;
