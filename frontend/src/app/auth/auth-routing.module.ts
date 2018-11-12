@@ -8,11 +8,12 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    canLoad: [UnAuthGuard]
+    canActivate: [UnAuthGuard]
   },
   {
     path: 'register',
-    component: RegisterComponent
+    component: RegisterComponent,
+    canActivate: [UnAuthGuard]
   }
 ];
 

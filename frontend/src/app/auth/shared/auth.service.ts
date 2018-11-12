@@ -107,6 +107,8 @@ export class AuthService {
         user.lastName = result.data['currentPerson'].lastName;
         user.id = result.data['currentPerson'].id;
         this.setAuth(user);
+      } else {
+        this.clearAuth();
       }
     });
   }
