@@ -1,10 +1,15 @@
 .content-wrapper {
-    background-color: #afb8ca/* rgb(66, 103, 178) */
-    ;
+    background-color: #4267b2;
     height: 54px;
+    border-bottom: 1px solid #4267AF;
+    color: #fff;
 }
 
 #toolbar {
+    a {
+        color: #fff;
+        font-weight: bold;
+    }
     max-width: 1024px;
     margin: 0 auto;
     position: relative;
@@ -60,12 +65,16 @@
     width: auto!important;
     height: 30px;
     padding: 0 8px;
-    border-radius: 0 2px 2px 0;
-    background: #66a992;
+    border-radius: 0 2px 2px 0 !important;
+    background: #f5f6f7;
     font-size: 13px;
     font-weight: 600;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
-    color: #fff
+    color: #616770 !important;
+}
+#submit-button:hover {
+    background: #cfcfd1;
+    
 }
 
 
