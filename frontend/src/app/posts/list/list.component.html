@@ -1,6 +1,6 @@
-<div style="max-width: 600px; margin: 0 auto;">
-  <div *ngFor="let edge of postListPaging.edges" style="">
-    <h3 style="color: #36589A">{{edge.node.title}}</h3>
+<div style="max-width: 800px; margin: 0 auto;">
+  <div *ngFor="let edge of postListPaging.edges" style="background-color: #ffffff; padding: 8px; margin: 2px;">
+    <h3><a style="color: #000000; " [routerLink]="['/posts/' + edge.node.id]" routerLinkActive="router-link-active" >{{edge.node.title}}</a></h3>
     <div [innerHtml]="edge.node.summary | safeHtml"></div>
   </div>
 </div>

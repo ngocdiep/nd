@@ -37,8 +37,7 @@ export class NewComponent implements OnInit {
 
   onSubmit() {
     this.resetStatus();
-    console.log(this.contentInput);
-    this.postService.createPost(this.loginForm.value, this.contentInput['editorElem'].innerText, this.authorId).subscribe(
+    this.postService.createPost(this.loginForm.value, this.contentInput['editorElem'].innerText.substring(0, 230), this.authorId).subscribe(
       result => {
         if (!result.errors) {
           this.router.navigateByUrl('');
