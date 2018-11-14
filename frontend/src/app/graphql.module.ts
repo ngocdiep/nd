@@ -4,6 +4,7 @@ import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
+const { createUploadLink } = require('apollo-upload-client');
 
 const uri = 'http://localhost:5000/graphql'; // <-- add the URL of the GraphQL server here
 
@@ -22,8 +23,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 export function createApollo(httpLink: HttpLink) {
+  const uploadLink = createUploadLink();
   return {
-    link: ApolloLink.from([errorLink, httpLink.create({ uri })]),
+    link: ApolloLink.from([errorLink, httpLink.create({ uri }), uploadLink]),
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

@@ -44,7 +44,7 @@ class App {
                     uploadFieldDefinitions: [
                         {
                             match: (column: any) => {
-                                column === "header_image_file"
+                                column === "avatar_url"
                             },
                             resolve: this.resolveUpload
                         }
