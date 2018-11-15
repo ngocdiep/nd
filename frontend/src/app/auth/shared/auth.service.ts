@@ -110,6 +110,9 @@ export class AuthService {
       } else {
         this.clearAuth();
       }
+    },
+    error => {
+      this.clearAuth();
     });
   }
 
