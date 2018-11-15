@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
-import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
-import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
+import { Apollo, ApolloModule } from 'apollo-angular';
+import { HttpLinkModule } from 'apollo-angular-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
-const { createUploadLink } = require('apollo-upload-client');
+import { onError } from 'apollo-link-error';
+import { createUploadLink } from 'apollo-upload-client';
+import { TokenService } from './core';
+import { createAuthLink } from './graphql/middlewares/auth';
 
 const uri = 'http://localhost:5000/graphql'; // <-- add the URL of the GraphQL server here
 
@@ -22,34 +24,28 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
-export function createApollo(httpLink: HttpLink) {
-  const uploadLink = createUploadLink();
-  return {
-    link: ApolloLink.from([errorLink, httpLink.create({ uri }), uploadLink]),
-    cache: new InMemoryCache(),
-    queryDeduplication: true,
-    defaultOptions: {
-      mutate: {
-        errorPolicy: 'all'
-      },
-      query: {
-        errorPolicy: 'all'
-      },
-      watchQuery: {
-        errorPolicy: 'all'
-      }
-    }
-  };
-}
-
 @NgModule({
   exports: [ApolloModule, HttpLinkModule],
-  providers: [
-    {
-      provide: APOLLO_OPTIONS,
-      useFactory: createApollo,
-      deps: [HttpLink],
-    },
-  ],
 })
-export class GraphQLModule { }
+export class GraphQLModule {
+  constructor(apollo: Apollo, tokenService: TokenService) {
+    const uploadLink = createUploadLink({ uri: uri });
+    const authLink = createAuthLink(tokenService);
+    apollo.create({
+      link: ApolloLink.from([authLink, errorLink, uploadLink]),
+      cache: new InMemoryCache(),
+      queryDeduplication: true,
+      defaultOptions: {
+        mutate: {
+          errorPolicy: 'all'
+        },
+        query: {
+          errorPolicy: 'all'
+        },
+        watchQuery: {
+          errorPolicy: 'all'
+        }
+      }
+    });
+  }
+}

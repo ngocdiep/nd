@@ -10,13 +10,13 @@ import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/shared/auth.service';
 
 const SINGLE_UPLOAD = gql`
-mutation ($nodeId: ID!, $personPatch: PersonPatch!) {
-  updatePerson(input: {nodeId: $nodeId, personPatch: $personPatch}) {
-    person {
-      avatarUrl
+  mutation ($id: Int!, $personPatch: PersonPatch!) {
+    updatePersonById(input: {id: $id, personPatch: $personPatch}) {
+      person {
+        id
+      }
     }
   }
-}
 `;
 
 const MULTIPLE_UPLOAD = gql`
@@ -56,8 +56,8 @@ export class FileUploadService {
       .mutate({
         mutation: SINGLE_UPLOAD,
         variables: {
-          nodeId: 'WyJwZW9wbGUiLDFd',
-          personPatch: {avatarUrl: files}
+          id: this.userId,
+          personPatch: { avatarUrl: files[0] }
         }
       })
       .pipe(map(res => {
@@ -72,14 +72,6 @@ export class FileUploadService {
         variables: {
           text: '123',
           files
-        },
-        update: (proxy: DataProxy, mutationResult: FetchResult<any>) => {
-          const data: any = proxy.readQuery({ query: UPLOADS });
-          const {
-            data: { multipleUpload: newUploads }
-          } = mutationResult;
-          data.uploads = data.uploads.concat(newUploads);
-          proxy.writeQuery({ query: UPLOADS, data });
         }
       })
       .pipe(map(res => {

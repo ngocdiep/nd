@@ -43,8 +43,9 @@ class App {
                 graphileBuildOptions: {
                     uploadFieldDefinitions: [
                         {
-                            match: (column: any) => {
-                                column === "avatar_url"
+                            match: (info: any) => {
+                                console.log('info.column: ', info.column);
+                                return info.column === "avatar_url";
                             },
                             resolve: this.resolveUpload
                         }
@@ -56,15 +57,36 @@ class App {
 
 
     private async resolveUpload(upload: any) {
+        console.log('upload: ', upload);
+        
         const { filename, createReadStream } = upload;
         const stream = createReadStream();
+
+        const timestamp = new Date().toISOString().replace(/\D/g, "");
+        const id = `${timestamp}_${filename}`;
+        const filepath = path.join(UPLOAD_DIR_NAME, id);
+        const fsPath = path.join(process.cwd(), filepath);
+        const rs = await new Promise<{id: string, filepath: string}>((resolve, reject) =>
+            stream
+                .on("error", (error: any) => {
+                    if (stream.truncated)
+                        // Delete the truncated file
+                        fs.unlinkSync(fsPath);
+                    reject(error);
+                })
+                .on("end", () => resolve({ id, filepath }))
+                .pipe(fs.createWriteStream(fsPath))
+        );
+
         // Save file to the local filesystem
-        const { filepath } = await this.saveLocal(stream, filename);
+        //const { filepath } = await this.saveLocal(stream, filename);
         // Return metadata to save it to Postgres
-        return filepath;
+        console.log('filepath: ' + rs.filepath);
+        
+        return rs.filepath;
     }
 
-    private saveLocal(stream: any, filename: any) {
+    /* private saveLocal(stream: any, filename: any) {
         const timestamp = new Date().toISOString().replace(/\D/g, "");
         const id = `${timestamp}_${filename}`;
         const filepath = path.join(UPLOAD_DIR_NAME, id);
@@ -81,7 +103,7 @@ class App {
                 .pipe(fs.createWriteStream(fsPath))
         );
 
-    }
+    } */
 }
 
 export default new App().app;
