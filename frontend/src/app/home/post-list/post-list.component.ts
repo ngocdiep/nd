@@ -18,11 +18,11 @@ export interface PostListPaging {
 }
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  selector: 'app-post-list',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.scss']
 })
-export class ListComponent implements OnInit {
+export class PostListComponent implements OnInit {
 
   @Input() postListPaging: PostListPaging;
   constructor() { }

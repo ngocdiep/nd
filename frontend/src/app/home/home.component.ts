@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PostListPaging } from '../posts/list/list.component';
 import { PostService } from '../posts/shared/post.service';
-import { Observable, of } from 'rxjs';
+import { PostListPaging } from './post-list/post-list.component';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +11,7 @@ export class HomeComponent implements OnInit {
 
   paging = {
     offset: 0,
-    first: 5
+    first: 50
   };
   postListPaging: PostListPaging;
   constructor(private postService: PostService) {

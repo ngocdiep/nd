@@ -23,9 +23,15 @@
       <a *ngIf="!isAuthenticated" routerLink='/auth/login' title='Login'>
         <span>Login</span>
       </a>
-      <a *ngIf="isAuthenticated" href="javascript:void(0)" (click)="onLogOut()" title='Logout'>
-        <span>Logout</span>
-      </a>
+      <div *ngIf="isAuthenticated" class="dropdown">
+        <button class="dropbtn"><i class="fas fa-user-circle fa-3x"></i></button>
+        <div class="dropdown-content">
+          <a routerLink="/profile">Profile</a>
+          <a href="javascript:void(0)" (click)="onLogOut()" title='Logout'>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

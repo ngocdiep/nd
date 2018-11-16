@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { HomeModule } from './home/home.module';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { PostsModule } from './posts/posts.module';
+import { ProfileModule } from './profile/profile.module';
 
 const routes: Routes = [
   {
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => AuthModule
+  },
+  {
+    path: 'profile',
+    loadChildren: () => ProfileModule
   },
   {
     path: 'password-reset',

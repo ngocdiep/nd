@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/shared/auth.service';
@@ -9,11 +9,11 @@ import { PostService } from '../shared/post.service';
   templateUrl: './new.component.html',
   styleUrls: ['./new.component.scss']
 })
-export class NewComponent implements OnInit {
+export class NewComponent implements OnInit, OnDestroy {
   authorId: number;
   loginForm: FormGroup;
   errors: string[] = [];
-  @ViewChild('contentInput') contentInput:ElementRef;
+  @ViewChild('contentInput') contentInput: ElementRef;
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -29,7 +29,12 @@ export class NewComponent implements OnInit {
 
     this.authService.currentUser.subscribe(user => {
       this.authorId = user.id;
+      console.log('authorId: ', this.authorId);
     });
+  }
+
+  ngOnDestroy(): void {
+    console.log('bye');
   }
 
   // convenience getter for easy access to form fields
