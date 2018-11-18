@@ -7,6 +7,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { SampleComponent } from './sample/sample.component';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { ErrorModalComponent } from './error-modal/error-modal.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,6 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     HeaderComponent,
     FileUploadComponent
   ],
-  declarations: [SampleComponent, HeaderComponent, ShowAuthedDirective, SafeHtmlPipe, FileUploadComponent]
+  declarations: [SampleComponent, HeaderComponent, ShowAuthedDirective, SafeHtmlPipe, FileUploadComponent, ErrorModalComponent]
 })
 export class SharedModule { }

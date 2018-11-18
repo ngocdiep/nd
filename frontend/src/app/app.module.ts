@@ -8,6 +8,7 @@ import { GraphQLModule } from './graphql.module';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { SampleComponent } from './shared/sample/sample.component';
 import { SharedModule } from './shared/shared.module';
+import { ErrorModalComponent } from './shared/error-modal/error-modal.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { SharedModule } from './shared/shared.module';
   ],
   providers: [],
   entryComponents: [
-    SampleComponent
+    SampleComponent,
+    ErrorModalComponent
   ],
   bootstrap: [AppComponent]
 })
