@@ -1,1 +1,28 @@
-<app-file-upload></app-file-upload>
+<div class="container">
+    <h1>Your profile</h1>
+    <hr>
+    <div>
+        <label>Avatar</label>
+        <div><img src="http://localhost:5000/{{(userProfile | async)?.avatarUrl}}" width="70px" />
+            <app-file-upload></app-file-upload>
+        </div>
+    </div>
+    <div style="display: flex">
+        <div style="padding-right: 10px">
+            <label>First name</label>
+            <input type="text" name="firstName" value="{{(userProfile | async)?.firstName}}">
+        </div>
+        <div>
+            <label>Last name</label>
+            <input type="text" name="lastName" value="{{(userProfile | async)?.lastName}}">
+        </div>
+    </div>
+    <div>
+        <label>Birthday</label>
+        <input type="date" name="about" value="{{(userProfile | async)?.birthday}}">
+    </div>
+    <div>
+        <label>About</label>
+        <textarea name="about" value="{{(userProfile | async)?.about}}"></textarea>
+    </div>
+</div>
