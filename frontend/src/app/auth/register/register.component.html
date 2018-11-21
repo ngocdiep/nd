@@ -6,7 +6,7 @@
     <div *ngIf="hasError()" class="form-error">
       <div *ngIf="isEmailExisted">
         <span>The email address you have entered is already registered. Did you </span>
-        <a routerLink='/password-reset'>forget password</a><span>?</span>
+        <a routerLink='/auth/password-reset'>forget password</a><span>?</span>
       </div>
       <div *ngFor="let error of errors">
         {{error}}

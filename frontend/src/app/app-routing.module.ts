@@ -1,31 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthModule } from './auth/auth.module';
-import { HomeModule } from './home/home.module';
-import { PasswordResetComponent } from './password-reset/password-reset.component';
-import { PostsModule } from './posts/posts.module';
-import { ProfileModule } from './profile/profile.module';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => HomeModule
+    loadChildren: './home/home.module#HomeModule'
   },
   {
     path: 'auth',
-    loadChildren: () => AuthModule
+    loadChildren: './auth/auth.module#AuthModule'
   },
   {
     path: 'profile',
-    loadChildren: () => ProfileModule
-  },
-  {
-    path: 'password-reset',
-    component: PasswordResetComponent
+    loadChildren: './profile/profile.module#ProfileModule'
   },
   {
     path: 'posts',
-    loadChildren: () => PostsModule
+    loadChildren: './posts/posts.module#PostsModule'
   }
 ];
 

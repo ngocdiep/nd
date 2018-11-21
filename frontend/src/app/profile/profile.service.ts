@@ -15,6 +15,16 @@ const getUserProfile = gql`
 }
 `;
 
+const updateProfile = gql`
+  mutation ($id: Int!, $personPatch: PersonPatch!) {
+  updatePersonById(input: {id: $id, personPatch: $personPatch}) {
+    person {
+      updatedAt
+    }
+  }
+}
+`;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,6 +39,17 @@ export class ProfileService {
       query: getUserProfile
     });
   }
+
+  update(id: number, personPatch: any) {
+    return this.apollo.mutate({
+      mutation: updateProfile,
+      variables: {
+        id: id,
+        personPatch: personPatch
+      }
+    });
+  }
+
 }
 
 

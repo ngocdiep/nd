@@ -8,18 +8,44 @@
         </div>
     </div>
     <div style="display: flex">
-        <div style="padding-right: 10px">
+        <div style="width: 50%; padding-right: 10px">
             <label>First name</label>
-            <input type="text" name="firstName" value="{{(userProfile | async)?.firstName}}">
+            <div class="edit-inline" #editFirstName>
+                <input type="text" #firstName value="{{(userProfile | async)?.firstName}}" (focus)="editFirstName.value = true"
+                    (keydown.esc)="resetFirstName(firstName);editFirstName.value = false;firstName.blur()"
+                    (keydown.enter)="updateFirstName(firstName.value, editFirstName, firstName)">
+                <div class="actions" *ngIf="editFirstName.value">
+                    <i class="fas fa-spinner fa-spin" *ngIf="(processing | async)?.firstName"></i>
+                    <i class="far fa-check-circle" style="padding: 0 4px" (click)="updateFirstName(firstName.value, editFirstName, firstName);editFirstName.value = false"></i>
+                    <i class="far fa-times-circle" (click)="resetFirstName(firstName);editFirstName.value = false"></i>
+                </div>
+            </div>
         </div>
-        <div>
+        <div style="width: 50%;">
             <label>Last name</label>
-            <input type="text" name="lastName" value="{{(userProfile | async)?.lastName}}">
+            <!-- <div class="edit-inline" #editLastName>
+                <input type="text" #lastName value="{{(userProfile | async)?.lastName}}" (focus)="editLastName.value = true"
+                    (keydown.esc)="resetLastName(lastName);editLastName.value = false;lastName.blur()" (keydown.enter)="updateLastName(lastName.value);editLastName.value = false;lastName.blur()">
+                <div class="actions" *ngIf="editLastName.value">
+                    <i class="fas fa-spinner fa-spin" *ngIf="(processing | async)?.lastName"></i>
+                    <i class="far fa-check-circle" style="padding: 0 4px" (click)="updateLastName(lastName.value);editLastName.value = false"></i>
+                    <i class="far fa-times-circle" (click)="resetLastName(lastName);editLastName.value = false"></i>
+                </div>
+            </div> -->
+            <app-edit-inline></app-edit-inline>
         </div>
     </div>
     <div>
         <label>Birthday</label>
-        <input type="date" name="about" value="{{(userProfile | async)?.birthday}}">
+        <div class="edit-inline" #editBirthday>
+            <input type="date" #birthday value="{{(userProfile | async)?.birthday}}" (focus)="editBirthday.value = true"
+                (keydown.esc)="resetBirthday(birthday);editBirthday.value = false;birthday.blur()" (keydown.enter)="updateBirthday(birthday.value);editBirthday.value = false;birthday.blur()">
+            <div class="actions" style="text-align: right" *ngIf="editBirthday.value">
+                <i class="fas fa-spinner fa-spin" *ngIf="(processing | async)?.birthday"></i>
+                <i class="far fa-check-circle" (click)="updateBirthday(birthday.value);editBirthday.value = false"></i>
+                <i class="far fa-times-circle" (click)="resetBirthday(birthday);editBirthday.value = false"></i>
+            </div>
+        </div>
     </div>
     <div>
         <label>About</label>

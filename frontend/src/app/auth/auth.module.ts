@@ -5,6 +5,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { RouterModule } from '@angular/router';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 
 @NgModule({
@@ -14,6 +15,6 @@ import { RouterModule } from '@angular/router';
     AuthRoutingModule,
     ReactiveFormsModule
   ],
-  declarations: [LoginComponent, RegisterComponent]
+  declarations: [LoginComponent, RegisterComponent, PasswordResetComponent]
 })
 export class AuthModule { }

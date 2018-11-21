@@ -5,16 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { GraphQLModule } from './graphql.module';
-import { PasswordResetComponent } from './password-reset/password-reset.component';
+import { ErrorModalComponent } from './shared/error-modal/error-modal.component';
 import { SampleComponent } from './shared/sample/sample.component';
 import { SharedModule } from './shared/shared.module';
-import { ErrorModalComponent } from './shared/error-modal/error-modal.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PasswordResetComponent,
   ],
   imports: [
     BrowserModule,

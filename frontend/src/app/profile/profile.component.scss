@@ -1,29 +1,30 @@
 .container {
     margin: 0 auto;
     max-width: 500px;
-    > div {
+    >div {
         padding: 5px;
         label {
             font-weight: bold;
         }
-        input, textarea {
+        input,
+        textarea {
             width: 100%;
-            padding: 15px;
-            margin: 5px 0 22px 0;
+            padding: 15px; // margin: 5px 0 22px 0;
             display: inline-block;
             border: none;
             border-radius: 6px;
             background: #ddd;
         }
-        input:focus {
-            background-color: #ddd;
-            outline: none;
+    }
+    .edit-inline {
+        position: relative;
+        .actions {
+            position: absolute;
+            right: 0;
         }
     }
 }
 
-[contenteditable=true]:empty:before {
-    content: attr(placeholder);
-    display: block;
-    /* For Firefox */
+.fa-spinner {
+    // position: absolute;
 }
