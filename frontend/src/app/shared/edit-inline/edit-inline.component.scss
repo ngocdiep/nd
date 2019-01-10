@@ -1,0 +1,15 @@
+.edit-inline {
+    position: relative;
+    input {
+        width: 100%;
+        padding: 15px;
+        display: inline-block;
+        border: none;
+        border-radius: 6px;
+        background: #ddd;
+    }
+    .actions {
+        position: absolute;
+        right: 0;
+    }
+}

@@ -1,0 +1,9 @@
+<div class="edit-inline">
+    <input type="text" #input value="data" (focus)="isEditting = true"
+        (keydown.esc)="onEsc()" (keydown.enter)="onEnter()">
+    <div class="actions" *ngIf="isEditting">
+        <i class="fas fa-spinner fa-spin" *ngIf="showSpinner"></i>
+        <i class="far fa-check-circle" style="padding: 0 4px" (click)="onSubmit()"></i>
+        <i class="far fa-times-circle" (click)="onCancel()"></i>
+    </div>
+</div>
