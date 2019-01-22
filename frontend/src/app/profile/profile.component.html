@@ -23,7 +23,7 @@
         </div>
         <div style="width: 50%;">
             <label>Last name</label>
-            <!-- <div class="edit-inline" #editLastName>
+            <div class="edit-inline" #editLastName>
                 <input type="text" #lastName value="{{(userProfile | async)?.lastName}}" (focus)="editLastName.value = true"
                     (keydown.esc)="resetLastName(lastName);editLastName.value = false;lastName.blur()" (keydown.enter)="updateLastName(lastName.value);editLastName.value = false;lastName.blur()">
                 <div class="actions" *ngIf="editLastName.value">
@@ -31,8 +31,7 @@
                     <i class="far fa-check-circle" style="padding: 0 4px" (click)="updateLastName(lastName.value);editLastName.value = false"></i>
                     <i class="far fa-times-circle" (click)="resetLastName(lastName);editLastName.value = false"></i>
                 </div>
-            </div> -->
-            <app-edit-inline></app-edit-inline>
+            </div>
         </div>
     </div>
     <div>
