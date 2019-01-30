@@ -1,8 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { map, takeLast } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/shared/auth.service';
+import { TagService } from 'src/app/core/services/tag.service';
 import { PostService } from '../shared/post.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-new',
@@ -17,6 +20,7 @@ export class NewComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private tagService: TagService,
     private postService: PostService,
     private router: Router,
   ) { }
@@ -40,6 +44,13 @@ export class NewComponent implements OnInit, OnDestroy {
 
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
+
+  public requestAutocompleteTags = (pattern: string): Observable<Response> => {
+    return this.tagService.filter(pattern).pipe(map(
+      result => {
+        return result.data['allTags'].nodes.map(tag => tag.name);
+      }));
+  }
 
   onSubmit() {
     this.resetStatus();

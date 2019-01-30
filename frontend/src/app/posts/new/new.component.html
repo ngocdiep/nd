@@ -9,7 +9,7 @@
     </div>
     <div #showValidationMessageTitle>
       <tag-input formControlName='tags' style="width: 100%">
-        <tag-input-dropdown [autocompleteItems]="[{display: 'Item1', value: 0}, 'item2', 'item3']">
+        <tag-input-dropdown [autocompleteObservable]='requestAutocompleteTags'>
         </tag-input-dropdown>
       </tag-input>
     </div>
