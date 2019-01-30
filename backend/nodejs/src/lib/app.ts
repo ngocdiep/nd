@@ -32,7 +32,7 @@ class App {
         this.app.use(graphqlUploadExpress());
 
         this.app.use(
-            postgraphile("postgres://nd_postgraphile:Abcd1234@localhost:5433/nd", ["nd", "nd_private"], {
+            postgraphile("postgres://nd_postgraphile:Abcd1234@localhost:5432/nd", ["nd", "nd_private"], {
                 graphiql: true,
                 enableCors: true,
                 pgDefaultRole: 'nd_anonymous',

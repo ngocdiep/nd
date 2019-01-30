@@ -11,7 +11,7 @@ import { PostService } from '../shared/post.service';
 })
 export class NewComponent implements OnInit, OnDestroy {
   authorId: number;
-  loginForm: FormGroup;
+  form: FormGroup;
   errors: string[] = [];
   @ViewChild('contentInput') contentInput: ElementRef;
   constructor(
@@ -22,7 +22,8 @@ export class NewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.loginForm = this.formBuilder.group({
+    this.form = this.formBuilder.group({
+      tags: [[], [Validators.required]],
       title: ['', [Validators.required]],
       content: ['', [Validators.required]],
     });
@@ -38,11 +39,11 @@ export class NewComponent implements OnInit, OnDestroy {
   }
 
   // convenience getter for easy access to form fields
-  get f() { return this.loginForm.controls; }
+  get f() { return this.form.controls; }
 
   onSubmit() {
     this.resetStatus();
-    this.postService.createPost(this.loginForm.value, this.contentInput['editorElem'].innerText.substring(0, 230), this.authorId).subscribe(
+    this.postService.createPost(this.form.value, this.contentInput['editorElem'].innerText.substring(0, 230), this.authorId).subscribe(
       result => {
         if (!result.errors) {
           this.router.navigateByUrl('');

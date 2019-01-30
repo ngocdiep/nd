@@ -17,6 +17,10 @@ const routes: Routes = [
   {
     path: 'posts',
     loadChildren: './posts/posts.module#PostsModule'
+  },
+  {
+    path: 'post-category',
+    loadChildren: './post-category/post-category.module#PostCategoryModule'
   }
 ];
 

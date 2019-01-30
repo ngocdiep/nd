@@ -1,4 +1,4 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="container">
     <h1>New post</h1>
     <hr>
@@ -6,6 +6,12 @@
       <div *ngFor="let error of errors">
         {{error}}
       </div>
+    </div>
+    <div #showValidationMessageTitle>
+      <tag-input formControlName='tags' style="width: 100%">
+        <tag-input-dropdown [autocompleteItems]="[{display: 'Item1', value: 0}, 'item2', 'item3']">
+        </tag-input-dropdown>
+      </tag-input>
     </div>
     <div #showValidationMessageTitle>
       <input #titleInput type="title" style="width: 100%" placeholder="Enter Title" id="title" formControlName="title"
@@ -23,7 +29,7 @@
     </div>
 
     <div class="clearfix">
-      <button [disabled]="loginForm.invalid" type="submit" class="signupbtn">Save</button>
+      <button [disabled]="form.invalid" type="submit" class="signupbtn">Save</button>
     </div>
   </div>
 </form>

@@ -1,272 +1,329 @@
-begin;
- 
- 
-create schema nd;
-create schema nd_private;
- 
-create table nd.person (
-  id               serial primary key,
-  first_name       text not null check (char_length(first_name) < 80),
-  last_name        text check (char_length(last_name) < 80),
-  birthday         date,
-  phone_number     text check(char_length(phone_number) < 31),
-  avatar_url       text check (char_length(avatar_url) < 256),
-  about            text,
-  created_at       timestamp default now()
-);
- 
-comment on table nd.person is 'A user of the application.';
-comment on column nd.person.id is 'The primary unique identifier for the person.';
-comment on column nd.person.first_name is 'The person’s first name.';
-comment on column nd.person.last_name is 'The person’s last name.';
-comment on column nd.person.birthday is 'The person’s birthday.';
-comment on column nd.person.phone_number is 'The person’s phone number.';
-comment on column nd.person.avatar_url is 'The person’s avatar url.';
-comment on column nd.person.about is 'A short description about the user, written by the user.';
-comment on column nd.person.created_at is 'The time this person was created.';
- 
-CREATE extension ltree;
-create table nd.post_category (
-  id                serial primary key,
-  parent_id         integer references nd.post_category(id),
-  parent_path       ltree,
-  name              text not null check (char_length(name) < 80)
-);
- 
-comment on table nd.post_category is 'A category of the post';
-comment on column nd.post_category.id is 'The primary unique identifier for post category.';
-comment on column nd.post_category.parent_id is 'The parent id of post category.';
-comment on column nd.post_category.parent_path is 'The parent path of post category.';
-comment on column nd.post_category.name is 'The name of post category.';
- 
-CREATE INDEX post_category_parent_path_idx ON nd.post_category USING GIST (parent_path);
-CREATE INDEX post_category_parent_id_idx ON nd.post_category (parent_id);
- 
-create table nd.post (
-  id               serial primary key,
-  author_id        integer not null references nd.person(id),
-  title            text not null check (char_length(title) < 280),
-  content          text,
-  summary         text check (char_length(title) < 300),
-  category_id      integer references nd.post_category(id),
-  created_at       timestamp default now()
-);
- 
-comment on table nd.post is 'A post written by a user.';
-comment on column nd.post.id is 'The primary key for the post.';
-comment on column nd.post.title is 'The title written by the user.';
-comment on column nd.post.author_id is 'The id of the author user.';
-comment on column nd.post.category_id is 'The id of category this has been posted in.';
-comment on column nd.post.content is 'The main content text of our post.';
-comment on column nd.post.created_at is 'The time this post was created.';
- 
-alter default privileges revoke execute on functions from public;
- 
-create function nd.person_full_name(person nd.person) returns text as $$
-  select person.first_name || ' ' || person.last_name
-$$ language sql stable;
- 
-comment on function nd.person_full_name(nd.person) is 'A person’s full name which is a concatenation of their first and last name.';
+BEGIN;
 
-create function nd.person_latest_post(person nd.person) returns nd.post as $$
-  select post.*
-  from nd.post as post
-  where post.author_id = person.id
-  order by created_at desc
-  limit 1
-$$ language sql stable;
- 
-comment on function nd.person_latest_post(nd.person) is 'Gets the latest post written by the person.';
- 
-create function nd.search_posts(search text) returns setof nd.post as $$
-  select post.*
-  from nd.post as post
-  where post.title ilike ('%' || search || '%') or post.content ilike ('%' || search || '%')
-$$ language sql stable;
- 
-comment on function nd.search_posts(text) is 'Returns posts containing a given search term.';
- 
-alter table nd.person add column updated_at timestamp default now();
-alter table nd.post add column updated_at timestamp default now();
- 
-create function nd_private.set_updated_at() returns trigger as $$
-begin
-  new.updated_at := current_timestamp;
-  return new;
-end;
-$$ language plpgsql;
- 
-create trigger person_updated_at before update
-  on nd.person
-  for each row
-  execute procedure nd_private.set_updated_at();
- 
-create trigger post_updated_at before update
-  on nd.post
-  for each row
-  execute procedure nd_private.set_updated_at();
-   
-CREATE OR REPLACE FUNCTION update_post_category_parent_path() RETURNS TRIGGER AS $$
-    DECLARE
-        path ltree;
-    BEGIN
-        IF NEW.parent_id IS NULL THEN
-            NEW.parent_path = ''::ltree;
-        ELSEIF TG_OP = 'INSERT' OR OLD.parent_id IS NULL OR OLD.parent_id != NEW.parent_id THEN
-            SELECT parent_path || id::text FROM nd.post_category WHERE id = NEW.parent_id INTO path;
-            IF path IS NULL THEN
-                RAISE EXCEPTION 'Invalid parent_id %', NEW.parent_id;
-            END IF;
-            NEW.parent_path = path;
+CREATE SCHEMA nd;
+
+CREATE SCHEMA nd_private;
+
+CREATE TABLE nd.person (
+    id serial PRIMARY KEY,
+    first_name text NOT NULL CHECK (char_length(first_name) < 80),
+    last_name text CHECK (char_length(last_name) < 80),
+    birthday date,
+    phone_number text CHECK (char_length(phone_number) < 31),
+    avatar_url text CHECK (char_length(avatar_url) < 256),
+    about text,
+    created_at timestamp DEFAULT now()
+);
+
+COMMENT ON TABLE nd.person IS 'A user of the application.';
+
+COMMENT ON COLUMN nd.person.id IS 'The primary unique identifier for the person.';
+
+COMMENT ON COLUMN nd.person.first_name IS 'The person’s first name.';
+
+COMMENT ON COLUMN nd.person.last_name IS 'The person’s last name.';
+
+COMMENT ON COLUMN nd.person.birthday IS 'The person’s birthday.';
+
+COMMENT ON COLUMN nd.person.phone_number IS 'The person’s phone number.';
+
+COMMENT ON COLUMN nd.person.avatar_url IS 'The person’s avatar url.';
+
+COMMENT ON COLUMN nd.person.about IS 'A short description about the user, written by the user.';
+
+COMMENT ON COLUMN nd.person.created_at IS 'The time this person was created.';
+
+CREATE TABLE nd.post (
+    id serial PRIMARY KEY,
+    author_id integer NOT NULL REFERENCES nd.person (id),
+    title text NOT NULL CHECK (char_length(title) < 280),
+    content text,
+    summary text CHECK (char_length(title) < 300),
+    created_at timestamp DEFAULT now()
+);
+
+COMMENT ON TABLE nd.post IS 'A post written by a user.';
+
+COMMENT ON COLUMN nd.post.id IS 'The primary key for the post.';
+
+COMMENT ON COLUMN nd.post.author_id IS 'The id of the author user.';
+
+COMMENT ON COLUMN nd.post.title IS 'The title written by the user.';
+
+COMMENT ON COLUMN nd.post.content IS 'The main content text of our post.';
+
+COMMENT ON COLUMN nd.post.created_at IS 'The time this post was created.';
+
+CREATE TABLE nd.tag (
+    id serial PRIMARY KEY,
+    name text NOT NULL UNIQUE CHECK (char_length(name) < 255)
+);
+
+COMMENT ON TABLE nd.tag IS 'A tag of the post';
+
+COMMENT ON COLUMN nd.tag.id IS 'The primary unique identifier for the tag.';
+
+COMMENT ON COLUMN nd.tag.name IS 'The name of tag.';
+
+CREATE TABLE nd.post_tag (
+    id serial PRIMARY KEY,
+    post_id integer NOT NULL REFERENCES nd.post (id),
+    tag_id integer NOT NULL REFERENCES nd.tag (id)
+);
+
+COMMENT ON TABLE nd.post_tag IS 'The post that tagged';
+COMMENT ON COLUMN nd.post_tag.id IS 'The primary unique identifier for the post_tag';
+COMMENT ON COLUMN nd.post_tag.post_id IS 'The id of the post';
+COMMENT ON COLUMN nd.post_tag.tag_id IS 'The id of the tag';
+
+ALTER DEFAULT privileges REVOKE EXECUTE ON functions FROM public;
+
+CREATE FUNCTION nd.person_full_name (person nd.person)
+    RETURNS text
+    AS $$
+    SELECT
+        person.first_name || ' ' || person.last_name
+$$
+LANGUAGE sql
+STABLE;
+
+COMMENT ON FUNCTION nd.person_full_name (nd.person) IS 'A person’s full name which is a concatenation of their first and last name.';
+
+CREATE FUNCTION nd.person_latest_post (person nd.person)
+    RETURNS nd.post
+    AS $$
+    SELECT
+        post.*
+    FROM
+        nd.post AS post
+    WHERE
+        post.author_id = person.id
+    ORDER BY
+        created_at DESC
+    LIMIT 1
+$$
+LANGUAGE sql
+STABLE;
+
+COMMENT ON FUNCTION nd.person_latest_post (nd.person) IS 'Gets the latest post written by the person.';
+
+CREATE FUNCTION nd.search_posts (search text)
+    RETURNS SETOF nd.post
+    AS $$
+    SELECT
+        post.*
+    FROM
+        nd.post AS post
+    WHERE
+        post.title ILIKE ('%' || search || '%')
+        OR post.content ILIKE ('%' || search || '%')
+$$
+LANGUAGE sql
+STABLE;
+
+COMMENT ON FUNCTION nd.search_posts (text) IS 'Returns posts containing a given search term.';
+
+ALTER TABLE nd.person
+    ADD COLUMN updated_at timestamp DEFAULT now();
+
+ALTER TABLE nd.post
+    ADD COLUMN updated_at timestamp DEFAULT now();
+
+CREATE FUNCTION nd_private.set_updated_at ()
+    RETURNS TRIGGER
+    AS $$
+BEGIN
+    new.updated_at := CURRENT_TIMESTAMP;
+    RETURN new;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER person_updated_at
+    BEFORE UPDATE ON nd.person FOR EACH ROW
+    EXECUTE PROCEDURE nd_private.set_updated_at ();
+
+CREATE TRIGGER post_updated_at
+    BEFORE UPDATE ON nd.post FOR EACH ROW
+    EXECUTE PROCEDURE nd_private.set_updated_at ();
+
+CREATE TABLE nd_private.person_account (
+    person_id integer PRIMARY KEY REFERENCES nd.person (id) ON DELETE CASCADE, email text NOT NULL UNIQUE CHECK (email ~* '^.+@.+\..+$'),
+    password_hash text NOT NULL
+);
+
+COMMENT ON TABLE nd_private.person_account IS 'Private information about a person’s account.';
+
+COMMENT ON COLUMN nd_private.person_account.person_id IS 'The id of the person associated with this account.';
+
+COMMENT ON COLUMN nd_private.person_account.email IS 'The email address of the person.';
+
+COMMENT ON COLUMN nd_private.person_account.password_hash IS 'An opaque hash of the person’s password.';
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+CREATE FUNCTION nd.register_person (first_name text, last_name text, email text, PASSWORD text)
+    RETURNS nd.person
+    AS $$
+DECLARE
+    person nd.person;
+BEGIN
+    INSERT INTO nd.person (first_name, last_name)
+        VALUES (first_name, last_name)
+    RETURNING
+        * INTO person;
+    INSERT INTO nd_private.person_account (person_id, email, password_hash)
+        VALUES (person.id, email, crypt(PASSWORD, gen_salt('bf')));
+    RETURN person;
+END;
+$$
+LANGUAGE plpgsql
+STRICT
+SECURITY DEFINER;
+
+COMMENT ON FUNCTION nd.register_person (text, text, text, text) IS 'Registers a single user and creates an account in our application.';
+
+CREATE TYPE nd.jwt_token AS (
+    ROLE text,
+    person_id integer
+);
+        CREATE FUNCTION nd.register_person_and_sign_in (first_name text, last_name text, email text, PASSWORD text )
+            RETURNS nd.jwt_token
+            AS $$
+DECLARE
+    person nd.person;
+BEGIN
+    INSERT INTO nd.person (first_name, last_name)
+        VALUES (first_name, last_name)
+    RETURNING
+        * INTO person;
+    INSERT INTO nd_private.person_account (person_id, email, password_hash)
+        VALUES (person.id, email, crypt(PASSWORD, gen_salt('bf')));
+    RETURN nd.authenticate (email,
+        PASSWORD);
+END;
+$$
+LANGUAGE plpgsql
+STRICT
+SECURITY DEFINER;
+
+COMMENT ON FUNCTION nd.register_person_and_sign_in (text, text, text, text) IS 'Registers a single user, creates an account in our application and then sign in this user immediately.';
+
+CREATE ROLE nd_postgraphile LOGIN PASSWORD 'Abcd1234';
+
+CREATE ROLE nd_anonymous;
+
+GRANT nd_anonymous TO nd_postgraphile;
+
+CREATE ROLE nd_person;
+
+GRANT nd_person TO nd_postgraphile;
+
+CREATE FUNCTION nd.authenticate (email text, PASSWORD text)
+    RETURNS nd.jwt_token
+    AS $$
+DECLARE
+    account nd_private.person_account;
+BEGIN
+    SELECT
+        a.* INTO account
+    FROM
+        nd_private.person_account AS a
+    WHERE
+        a.email = $1;
+        IF account.password_hash = crypt(PASSWORD, account.password_hash) THEN
+            RETURN ('nd_person',
+                account.person_id)::nd.jwt_token;
+        ELSE
+            RETURN NULL;
         END IF;
-        RETURN NEW;
-    END;
-$$ LANGUAGE plpgsql;
- 
-CREATE TRIGGER parent_path_tgr
-    BEFORE INSERT OR UPDATE ON nd.post_category
-    FOR EACH ROW EXECUTE PROCEDURE update_post_category_parent_path();
- 
-create table nd_private.person_account (
-  person_id        integer primary key references nd.person(id) on delete cascade,
-  email            text not null unique check (email ~* '^.+@.+\..+$'),
-  password_hash    text not null
-);
- 
-comment on table nd_private.person_account is 'Private information about a person’s account.';
-comment on column nd_private.person_account.person_id is 'The id of the person associated with this account.';
-comment on column nd_private.person_account.email is 'The email address of the person.';
-comment on column nd_private.person_account.password_hash is 'An opaque hash of the person’s password.';
- 
-create extension if not exists "pgcrypto";
- 
-create function nd.register_person(
-  first_name text,
-  last_name text,
-  email text,
-  password text
-) returns nd.person as $$
-declare
-  person nd.person;
-begin
-  insert into nd.person (first_name, last_name) values
-    (first_name, last_name)
-    returning * into person;
- 
-  insert into nd_private.person_account (person_id, email, password_hash) values
-    (person.id, email, crypt(password, gen_salt('bf')));
- 
-  return person;
-end;
-$$ language plpgsql strict security definer;
+END;
+$$
+LANGUAGE plpgsql
+STRICT
+SECURITY DEFINER;
 
-comment on function nd.register_person(text, text, text, text) is 'Registers a single user and creates an account in our application.';
+COMMENT ON FUNCTION nd.authenticate (text, text) IS 'Creates a JWT token that will securely identify a person and give them certain permissions.';
 
-create type nd.jwt_token as (
-  role text,
-  person_id integer
-);
+CREATE FUNCTION nd.current_person ()
+    RETURNS nd.person
+    AS $$
+    SELECT
+        *
+    FROM
+        nd.person
+    WHERE
+        id = current_setting('jwt.claims.person_id', TRUE)::integer
+$$
+LANGUAGE sql
+STABLE;
 
-create function nd.register_person_and_sign_in(
-  first_name text,
-  last_name text,
-  email text,
-  password text
-) returns nd.jwt_token as $$
-declare
-  person nd.person;
-begin
-  insert into nd.person (first_name, last_name) values
-    (first_name, last_name)
-    returning * into person;
- 
-  insert into nd_private.person_account (person_id, email, password_hash) values
-    (person.id, email, crypt(password, gen_salt('bf')));
- 
-  return nd.authenticate(email, password);
-end;
-$$ language plpgsql strict security definer;
- 
-comment on function nd.register_person_and_sign_in(text, text, text, text) is 'Registers a single user, creates an account in our application and then sign in this user immediately.';
- 
-create role nd_postgraphile login password 'Abcd1234';
- 
-create role nd_anonymous;
-grant nd_anonymous to nd_postgraphile;
- 
-create role nd_person;
-grant nd_person to nd_postgraphile;
- 
-create function nd.authenticate(
-  email text,
-  password text
-) returns nd.jwt_token as $$
-declare
-  account nd_private.person_account;
-begin
-  select a.* into account
-  from nd_private.person_account as a
-  where a.email = $1;
- 
-  if account.password_hash = crypt(password, account.password_hash) then
-    return ('nd_person', account.person_id)::nd.jwt_token;
-  else
-    return null;
-  end if;
-end;
-$$ language plpgsql strict security definer;
- 
-comment on function nd.authenticate(text, text) is 'Creates a JWT token that will securely identify a person and give them certain permissions.';
- 
-create function nd.current_person() returns nd.person as $$
-  select *
-  from nd.person
-  where id = current_setting('jwt.claims.person_id', true)::integer
-$$ language sql stable;
- 
-comment on function nd.current_person() is 'Gets the person who was identified by our JWT.';
- 
-grant usage on schema nd to nd_anonymous, nd_person;
- 
-grant select on table nd.person to nd_anonymous, nd_person;
-grant update, delete on table nd.person to nd_person;
- 
-grant select on table nd.post to nd_anonymous, nd_person;
-grant insert, update, delete on table nd.post to nd_person;
-grant usage on sequence nd.post_id_seq to nd_person;
- 
-grant execute on function nd.person_full_name(nd.person) to nd_anonymous, nd_person;
-grant execute on function nd.person_latest_post(nd.person) to nd_anonymous, nd_person;
-grant execute on function nd.search_posts(text) to nd_anonymous, nd_person;
-grant execute on function nd.authenticate(text, text) to nd_anonymous, nd_person;
-grant execute on function nd.current_person() to nd_anonymous, nd_person;
- 
-grant execute on function nd.register_person(text, text, text, text) to nd_anonymous;
-grant execute on function nd.register_person_and_sign_in(text, text, text, text) to nd_anonymous;
- 
-alter table nd.person enable row level security;
-alter table nd.post enable row level security;
- 
-create policy select_person on nd.person for select
-  using (true);
- 
-create policy select_post on nd.post for select
-  using (true);
- 
-create policy update_person on nd.person for update to nd_person
-  using (id = current_setting('jwt.claims.person_id', true)::integer);
- 
-create policy delete_person on nd.person for delete to nd_person
-  using (id = current_setting('jwt.claims.person_id', true)::integer);
- 
-create policy insert_post on nd.post for insert to nd_person
-  with check (author_id = current_setting('jwt.claims.person_id', true)::integer);
- 
-create policy update_post on nd.post for update to nd_person
-  using (author_id = current_setting('jwt.claims.person_id', true)::integer);
- 
-create policy delete_post on nd.post for delete to nd_person
-  using (author_id = current_setting('jwt.claims.person_id', true)::integer);
- 
- 
-commit;
+COMMENT ON FUNCTION nd.current_person () IS 'Gets the person who was identified by our JWT.';
+
+GRANT usage ON SCHEMA nd TO nd_anonymous, nd_person;
+
+GRANT SELECT ON TABLE nd.person TO nd_anonymous, nd_person;
+
+GRANT UPDATE, DELETE ON TABLE nd.person TO nd_person;
+
+GRANT SELECT ON TABLE nd.post TO nd_anonymous, nd_person;
+
+GRANT INSERT, UPDATE, DELETE ON TABLE nd.post TO nd_person;
+
+GRANT usage ON SEQUENCE nd.post_id_seq
+    TO nd_person;
+
+GRANT SELECT ON TABLE nd.tag TO nd_anonymous, nd_person;
+
+GRANT INSERT, UPDATE, DELETE ON TABLE nd.tag TO nd_person;
+
+GRANT usage ON SEQUENCE nd.tag_id_seq
+    TO nd_person;
+
+GRANT SELECT ON TABLE nd.post_tag TO nd_anonymous, nd_person;
+
+GRANT INSERT, UPDATE, DELETE ON TABLE nd.post_tag TO nd_person;
+
+GRANT usage ON SEQUENCE nd.post_tag_id_seq
+    TO nd_person;    
+
+GRANT EXECUTE ON FUNCTION nd.person_full_name (nd.person)
+TO nd_anonymous, nd_person;
+
+GRANT EXECUTE ON FUNCTION nd.person_latest_post (nd.person)
+TO nd_anonymous, nd_person;
+
+GRANT EXECUTE ON FUNCTION nd.search_posts (text)
+TO nd_anonymous, nd_person;
+
+GRANT EXECUTE ON FUNCTION nd.authenticate (text, text)
+TO nd_anonymous, nd_person;
+
+GRANT EXECUTE ON FUNCTION nd.current_person ()
+TO nd_anonymous, nd_person;
+
+GRANT EXECUTE ON FUNCTION nd.register_person (text, text, text, text)
+TO nd_anonymous;
+
+GRANT EXECUTE ON FUNCTION nd.register_person_and_sign_in (text, text, text, text)
+TO nd_anonymous;
+
+ALTER TABLE nd.person enable ROW level SECURITY;
+
+ALTER TABLE nd.post enable ROW level SECURITY;
+
+CREATE POLICY select_person ON nd.person FOR SELECT USING (TRUE);
+
+CREATE POLICY select_post ON nd.post FOR SELECT USING (TRUE);
+
+CREATE POLICY update_person ON nd.person FOR UPDATE TO nd_person USING (id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY delete_person ON nd.person FOR DELETE TO nd_person USING (id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY insert_post ON nd.post FOR INSERT TO nd_person WITH CHECK (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY update_post ON nd.post FOR UPDATE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY delete_post ON nd.post FOR DELETE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+COMMIT;
