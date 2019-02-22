@@ -68,7 +68,8 @@ COMMENT ON COLUMN nd.tag.name IS 'The name of tag.';
 CREATE TABLE nd.post_tag (
     id serial PRIMARY KEY,
     post_id integer NOT NULL REFERENCES nd.post (id),
-    tag_id integer NOT NULL REFERENCES nd.tag (id)
+    tag_id integer NOT NULL REFERENCES nd.tag (id),
+    CONSTRAINT UC_post_tag UNIQUE (post_id, tag_id)
 );
 
 COMMENT ON TABLE nd.post_tag IS 'The post that tagged';
@@ -260,6 +261,32 @@ STABLE;
 
 COMMENT ON FUNCTION nd.current_person () IS 'Gets the person who was identified by our JWT.';
 
+
+CREATE FUNCTION nd.create_post_with_tags (post nd.post, tags text[])
+    RETURNS nd.post
+    AS $$
+DECLARE
+    tag_name text;
+    tag_id integer;
+BEGIN    
+    INSERT INTO nd.post(title, content, summary, author_id) values (post.title, post.content, post.summary, post.author_id)
+    RETURNING
+        * INTO post;
+    foreach tag_name in array tags loop
+        select id into tag_id from nd.tag where name = tag_name;
+        if (tag_id is null) THEN
+            insert into nd.tag(name) values (tag_name);
+            select id into tag_id from nd.tag where name = tag_name;
+        end if;        
+        insert into nd.post_tag(post_id, tag_id) values (post.id, tag_id);
+    end loop;
+    RETURN post;
+END;
+$$
+LANGUAGE plpgsql volatile
+STRICT
+SECURITY DEFINER;
+
 GRANT usage ON SCHEMA nd TO nd_anonymous, nd_person;
 
 GRANT SELECT ON TABLE nd.person TO nd_anonymous, nd_person;
@@ -307,6 +334,9 @@ TO nd_anonymous;
 
 GRANT EXECUTE ON FUNCTION nd.register_person_and_sign_in (text, text, text, text)
 TO nd_anonymous;
+
+GRANT EXECUTE ON FUNCTION nd.create_post_with_tags (nd.post, text[])
+TO nd_person;
 
 ALTER TABLE nd.person enable ROW level SECURITY;
 

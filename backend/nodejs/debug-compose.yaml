@@ -1,0 +1,31 @@
+version: "3"
+services:
+  flyway:
+    image: boxfuse/flyway:5.2.4
+    command: migrate
+    volumes:
+      - ../flyway:/flyway/conf
+      - ../flyway/database/migrations:/flyway/sql
+    depends_on:
+      - db
+  app:
+      image: node:alpine
+      volumes:
+        - ./:/app
+      working_dir: /app
+      depends_on:
+        - db
+      environment:
+        NODE_ENV: development
+      ports:
+        - 5000:5000
+      command: npm run start:dev
+      restart: always
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: nd
+      POSTGRES_PASSWORD: 123123
+    ports:
+      - "5433:5432"
+    restart: always
