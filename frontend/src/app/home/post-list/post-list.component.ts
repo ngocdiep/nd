@@ -6,7 +6,14 @@ export interface PostListPaging {
     node: {
       id: number;
       title: string;
-      summary: string
+      summary: string;
+      postTagsByPostId: {
+        nodes: {
+          tagByTagId: {
+            name: string
+          }
+        }
+      }
     }
   }];
   totalCount: number;

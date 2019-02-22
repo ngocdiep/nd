@@ -101,7 +101,14 @@ export class ProfileComponent implements OnInit {
   }
 
   update(userId: number, personPatch: any) {
-    return this.profileService.update(userId, personPatch);
+    return this.profileService.update(+userId, personPatch);
   }
 
+  onAvatarUploaded($event) {
+    console.log($event);
+    this.userProfile.subscribe(user => {
+      user.avatarUrl = $event.data['updatePersonById'].person.avatarUrl;
+      this.userProfile = of(user);
+    });
+  }
 }

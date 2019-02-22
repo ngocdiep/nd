@@ -14,6 +14,7 @@ const SINGLE_UPLOAD = gql`
     updatePersonById(input: {id: $id, personPatch: $personPatch}) {
       person {
         id
+        avatarUrl
       }
     }
   }

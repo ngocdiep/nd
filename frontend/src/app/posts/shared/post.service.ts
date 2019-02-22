@@ -6,8 +6,8 @@ import { AuthService } from 'src/app/auth/shared/auth.service';
 import { map } from 'rxjs/operators';
 
 const createPost = gql`
-mutation ($title: String!, $content: String, $summary: String, $authorId: Int!) {
-  createPost(input: {post: {title: $title, content: $content, summary: $summary, authorId: $authorId}}) {
+mutation ($title: String!, $content: String, $summary: String, $authorId: Int!, $tags: [String!]!) {
+  createPostWithTags(input: {post: {title: $title, content: $content, summary: $summary, authorId: $authorId}, tags: $tags}) {
     post {
       id
     }
@@ -32,6 +32,13 @@ query ($offset: Int, $first: Int) {
         id
         title
         summary
+        postTagsByPostId {
+          nodes {
+            tagByTagId {
+              name
+            }
+          }
+        }
       }
     }
     totalCount
@@ -55,13 +62,18 @@ export class PostService {
   ) { }
 
   createPost(input: any, summary: string, authorId: number) {
+    const tags = [];
+    input.tags.forEach(tag => {
+      tags.push(tag.value);
+    });
     return this.apollo.mutate({
       mutation: createPost,
       variables: {
         title: input.title,
         content: input.content,
         summary: summary,
-        authorId: authorId
+        authorId: authorId,
+        tags: tags
       }
     }).pipe(map(result => {
       return result;

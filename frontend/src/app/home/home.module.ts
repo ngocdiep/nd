@@ -4,6 +4,7 @@ import { SharedModule } from '../shared/shared.module';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { PostListComponent } from './post-list/post-list.component';
+import { TagListComponent } from './post-list/tag-list/tag-list.component';
 
 
 @NgModule({
@@ -12,6 +13,6 @@ import { PostListComponent } from './post-list/post-list.component';
     HomeRoutingModule,
     SharedModule
   ],
-  declarations: [HomeComponent, PostListComponent]
+  declarations: [HomeComponent, PostListComponent, TagListComponent]
 })
 export class HomeModule { }

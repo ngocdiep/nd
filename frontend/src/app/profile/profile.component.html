@@ -4,7 +4,7 @@
     <div>
         <label>Avatar</label>
         <div><img src="http://localhost:5000/{{(userProfile | async)?.avatarUrl}}" width="70px" />
-            <app-file-upload></app-file-upload>
+            <app-file-upload (filePathUploaded)="onAvatarUploaded($event)"></app-file-upload>
         </div>
     </div>
     <div style="display: flex">

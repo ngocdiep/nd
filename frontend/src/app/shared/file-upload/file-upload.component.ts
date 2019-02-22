@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FileUploadService } from './file-upload.service';
 
 @Component({
@@ -7,6 +7,9 @@ import { FileUploadService } from './file-upload.service';
   styleUrls: ['./file-upload.component.scss']
 })
 export class FileUploadComponent {
+
+  @Output()
+  filePathUploaded = new EventEmitter();
 
   constructor(private fileUploadService: FileUploadService) {}
 
@@ -20,7 +23,7 @@ export class FileUploadComponent {
   private upload(files: FileList) {
     this.fileUploadService.upload(files).subscribe(
       data => {
-        console.log('upload successfully');
+        this.filePathUploaded.emit(data);
       },
       err => console.log(err)
     );

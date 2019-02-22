@@ -25,7 +25,7 @@ export class DetailComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       console.log(params['id']);
-      this.postService.get(params['id']).subscribe(result => {
+      this.postService.get(+params['id']).subscribe(result => {
         this.postView = of({
           title: result.data['postById'].title,
           content: result.data['postById'].content
