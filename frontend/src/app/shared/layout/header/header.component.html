@@ -4,9 +4,6 @@
       <a routerLink='/' title='Home'>
         <span>Home</span>
       </a>
-      <a routerLink='/top' title='Top'>
-        <span>Top</span>
-      </a>
       <form id="search-form" (ngSubmit)="onSubmit()" #searchForm="ngForm">
         <input type='text' name="search-string" placeholder='Search here...' size='15' [(ngModel)]="model.searchString" />
         <button type='submit' id="submit-button"><i class="fa fa-search"></i></button>
