@@ -2,8 +2,8 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import * as fs from 'fs';
 import * as path from 'path';
 import postgraphile from 'postgraphile';
-import { ConfigService } from 'src/config.service';
-import { ConfigModule } from 'src/config.module';
+import { ConfigService } from '../config.service';
+import { ConfigModule } from '../config.module';
 const UPLOAD_DIR_NAME = 'storage/files';
 
 @Module({
