@@ -2,21 +2,30 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import * as fs from 'fs';
 import * as path from 'path';
 import postgraphile from 'postgraphile';
-
-const PostGraphileUploadFieldPlugin = require('postgraphile-plugin-upload-field');
+import { ConfigService } from 'src/config.service';
+import { ConfigModule } from 'src/config.module';
 const UPLOAD_DIR_NAME = 'storage/files';
 
 @Module({
-    imports: [],
+    imports: [ConfigModule],
     providers: [],
     controllers: [
     ],
     exports: [],
 })
 export class PostgraphileModule implements NestModule {
+    constructor(
+        private configService: ConfigService,
+    ) {
+
+    }
     public configure(consumer: MiddlewareConsumer) {
+        const dbUrl = 'postgres://' + this.configService.get('DATABASE_USER') + ':' + this.configService.get('DATABASE_PASSWORD')
+            + '@' + this.configService.get('DATABASE_HOST') +
+            ':' + this.configService.get('DATABASE_PORT') + '/' + this.configService.get('DATABASE_NAME');
+        const PostGraphileUploadFieldPlugin = require('postgraphile-plugin-upload-field');
         consumer
-            .apply(postgraphile('postgres://nd_postgraphile:Abcd1234@db:5432/nd', ['nd', 'nd_private'], {
+            .apply(postgraphile(dbUrl, ['nd', 'nd_private'], {
                 graphiql: true,
                 graphiqlRoute: '/graphiql',
                 enableCors: true,
@@ -29,10 +38,9 @@ export class PostgraphileModule implements NestModule {
                     uploadFieldDefinitions: [
                         {
                             match: (info: any) => {
-                                console.log('info.column: ', info.column);
                                 return info.column === 'avatar_url';
                             },
-                            resolve: this.resolveUpload
+                            resolve: this.resolveUpload,
                         },
                     ],
                 },
@@ -40,8 +48,6 @@ export class PostgraphileModule implements NestModule {
     }
 
     private async resolveUpload(upload: any) {
-        console.log('upload: ', upload);
-
         const { filename, createReadStream } = upload;
         const stream = createReadStream();
 
@@ -65,8 +71,6 @@ export class PostgraphileModule implements NestModule {
         // Save file to the local filesystem
         // const { filepath } = await this.saveLocal(stream, filename);
         // Return metadata to save it to Postgres
-        console.log('filepath: ' + rs.filepath);
-
         return rs.filepath;
     }
 }
