@@ -39,7 +39,7 @@ query {
 })
 export class AuthService {
 
-  private currentUserSubject = new BehaviorSubject<User>({} as User);
+  public currentUserSubject = new BehaviorSubject<User>({} as User);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
 
   private isAuthenticatedSubject = new ReplaySubject<boolean>(1);

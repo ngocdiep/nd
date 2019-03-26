@@ -94,4 +94,49 @@ export class PostService {
       fetchPolicy: 'no-cache'
     });
   }
+
+  getComments(postId: number, offset: number, first: number) {
+    return this.apollo.query({
+      query: gql`
+        query($id: Int!, $offset: Int, $first: Int) {
+          postById(id: $id) {
+            id
+            postCommentsByPostId(offset: $offset, first: $first) {
+              edges {
+                node {
+                  content
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        id: postId,
+        offset: offset,
+        first: first
+      }
+    });
+  }
+
+  addComment(authorId: number, postId: number, input: any) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation($authorId: Int!, $postId: Int!, $content: String!) {
+          createPostComment(input: {postComment: {authorId: $authorId, postId: $postId, content: $content}}) {
+            postComment {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        content: input.content,
+        authorId: authorId,
+        postId: postId
+      }
+    }).pipe(map(result => {
+      return result;
+    }));
+  }
 }
