@@ -377,7 +377,13 @@ GRANT SELECT ON TABLE nd.post_comment_reaction TO nd_anonymous, nd_person;
 GRANT INSERT, UPDATE, DELETE ON TABLE nd.post_comment_reaction TO nd_person;
 
 GRANT usage ON SEQUENCE nd.post_tag_id_seq
-    TO nd_person;    
+    TO nd_person;
+GRANT usage ON SEQUENCE nd.post_reaction_id_seq
+    TO nd_person;
+GRANT usage ON SEQUENCE nd.post_comment_id_seq
+    TO nd_person;
+GRANT usage ON SEQUENCE nd.post_comment_reaction_id_seq
+    TO nd_person;
 
 GRANT EXECUTE ON FUNCTION nd.person_full_name (nd.person)
 TO nd_anonymous, nd_person;
