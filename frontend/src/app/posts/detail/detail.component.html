@@ -3,10 +3,8 @@
   <p [innerHTML]="(postView | async)?.content | safeHtml"> </p>
   <div class="comments">
     <h3>Comments</h3>
-    <div *ngFor="let comment of comments">
-      <p [innerHTML]="comment.node.content | safeHtml"></p>
-    </div>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-comment-list [comments]="comments" [postId]="postId"></app-comment-list>
+    <form [formGroup]="form" (ngSubmit)="addComment()">
         <quill-editor #contentInput style="width: 100%; height: 1000px;" placeholder="Enter Content" id="content"
         formControlName="content"></quill-editor>
       <input type="submit" value="Comment">

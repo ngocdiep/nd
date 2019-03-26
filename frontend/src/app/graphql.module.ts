@@ -10,6 +10,7 @@ import { ModalService } from './core/services/modal.service';
 import { createErrorLink } from './graphql/middlewares/error';
 
 const uri = 'http://localhost:5000/graphql'; // <-- add the URL of the GraphQL server here
+// const uri = '/graphql';
 
 @NgModule({
   exports: [ApolloModule, HttpLinkModule],

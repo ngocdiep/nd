@@ -42,7 +42,7 @@ export class DetailComponent implements OnInit {
 
     this.postService.getComments(this.postId, this.getCommentsParam.offset, this.getCommentsParam.first).subscribe(
       result => {
-        this.comments = result.data['postById'].postCommentsByPostId.edges;
+        this.comments = result.data['postById'].postCommentsByPostId.nodes;
       }
     );
 
@@ -51,9 +51,15 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    console.log(this.form.get('content'));
-    this.postService.addComment(this.postId, this.authService.currentUserSubject.getValue().id, this.form.value)
+  addComment() {
+    this.postService.addComment(this.authService.currentUserSubject.getValue().id, this.postId, this.form.value)
+      .subscribe(result => {
+        console.log(result);
+      });
+  }
+
+  addReply(commentId: number) {
+    this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
       .subscribe(result => {
         console.log(result);
       });

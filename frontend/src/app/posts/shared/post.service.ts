@@ -102,9 +102,14 @@ export class PostService {
           postById(id: $id) {
             id
             postCommentsByPostId(offset: $offset, first: $first) {
-              edges {
-                node {
-                  content
+              nodes {
+                id
+                content
+                postCommentsByParentId {
+                  nodes {
+                    id
+                    content
+                  }
                 }
               }
             }
@@ -134,6 +139,29 @@ export class PostService {
         content: input.content,
         authorId: authorId,
         postId: postId
+      }
+    }).pipe(map(result => {
+      return result;
+    }));
+  }
+
+
+  addReply(authorId: number, postId: number, parentId: number, input: any) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ($authorId: Int!, $postId: Int!, $parentId: Int, $content: String!) {
+          createPostComment(input: {postComment: {authorId: $authorId, postId: $postId, parentId: $parentId, content: $content}}) {
+            postComment {
+              id
+            }
+          }
+        }
+      `,
+      variables: {
+        content: input.content,
+        authorId: authorId,
+        postId: postId,
+        parentId: parentId
       }
     }).pipe(map(result => {
       return result;
