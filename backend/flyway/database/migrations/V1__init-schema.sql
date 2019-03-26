@@ -117,7 +117,7 @@ COMMENT ON COLUMN nd.post_tag.post_id IS 'The id of the post';
 COMMENT ON COLUMN nd.post_tag.tag_id IS 'The id of the tag';
 COMMENT ON COLUMN nd.post_tag.created_at IS 'The time that the post is tagged with a tag name.';
 
-CREATE TYPE nd.post_reaction_type as enum (
+CREATE TYPE nd.reaction_type as enum (
     'LIKE',
     'LOVE',
     'DISLIKE'
@@ -127,7 +127,7 @@ CREATE TABLE nd.post_reaction (
     id serial PRIMARY KEY,
     author_id integer NOT NULL REFERENCES nd.person (id),
     post_id integer NOT NULL REFERENCES nd.post (id),
-    type nd.post_reaction_type NOT NULL,
+    type nd.reaction_type NOT NULL,
     created_at timestamp DEFAULT now(),
     updated_at timestamp DEFAULT now()
 );
@@ -136,26 +136,21 @@ CREATE TABLE nd.post_comment (
     id serial PRIMARY KEY,
     author_id integer NOT NULL REFERENCES nd.person (id),
     post_id integer NOT NULL REFERENCES nd.post (id),
+    parent_id integer REFERENCES nd.post_comment (id),
     content text NOT NULL,
     created_at timestamp DEFAULT now(),
     updated_at timestamp DEFAULT now()
-);
-
-CREATE TYPE nd.post_comment_reaction_type as enum (
-    'LIKE',
-    'LOVE',
-    'DISLIKE',
-    'SAD'
 );
 
 CREATE TABLE nd.post_comment_reaction (
     id serial PRIMARY KEY,
     author_id integer NOT NULL REFERENCES nd.person (id),
     post_comment_id integer NOT NULL REFERENCES nd.post_comment (id),
-    type nd.post_comment_reaction_type NOT NULL,
+    type nd.reaction_type NOT NULL,
     created_at timestamp DEFAULT now(),
     updated_at timestamp DEFAULT now()
 );
+
 
 ALTER DEFAULT privileges REVOKE EXECUTE ON functions FROM public;
 
