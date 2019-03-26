@@ -4,6 +4,16 @@ CREATE SCHEMA nd;
 
 CREATE SCHEMA nd_private;
 
+CREATE FUNCTION nd_private.set_updated_at ()
+    RETURNS TRIGGER
+    AS $$
+BEGIN
+    new.updated_at := CURRENT_TIMESTAMP;
+    RETURN new;
+END;
+$$
+LANGUAGE plpgsql;
+
 CREATE TABLE nd.person (
     id serial PRIMARY KEY,
     first_name text NOT NULL CHECK (char_length(first_name) < 80),
@@ -12,7 +22,8 @@ CREATE TABLE nd.person (
     phone_number text CHECK (char_length(phone_number) < 31),
     avatar_url text CHECK (char_length(avatar_url) < 256),
     about text,
-    created_at timestamp DEFAULT now()
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now()
 );
 
 COMMENT ON TABLE nd.person IS 'A user of the application.';
@@ -33,13 +44,31 @@ COMMENT ON COLUMN nd.person.about IS 'A short description about the user, writte
 
 COMMENT ON COLUMN nd.person.created_at IS 'The time this person was created.';
 
+COMMENT ON COLUMN nd.person.updated_at IS 'The time this person was updated.';
+
+CREATE TRIGGER person_updated_at
+    BEFORE UPDATE ON nd.person FOR EACH ROW
+    EXECUTE PROCEDURE nd_private.set_updated_at ();
+
+CREATE TYPE nd.post_status as enum (
+    'IN_PROGRESS',
+    'READY_TO_REVIEW',
+    'REVIEWING',
+    'REVIEWED',
+    'PUBLISHED',
+    'HIDDED'
+);
+
 CREATE TABLE nd.post (
     id serial PRIMARY KEY,
     author_id integer NOT NULL REFERENCES nd.person (id),
     title text NOT NULL CHECK (char_length(title) < 280),
     content text,
     summary text CHECK (char_length(title) < 300),
-    created_at timestamp DEFAULT now()
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now(),
+    published_at timestamp,
+    source text CHECK (char_length(title) < 300)
 );
 
 COMMENT ON TABLE nd.post IS 'A post written by a user.';
@@ -54,9 +83,16 @@ COMMENT ON COLUMN nd.post.content IS 'The main content text of our post.';
 
 COMMENT ON COLUMN nd.post.created_at IS 'The time this post was created.';
 
+COMMENT ON COLUMN nd.post.updated_at IS 'The time this post was updated.';
+
+CREATE TRIGGER post_updated_at
+    BEFORE UPDATE ON nd.post FOR EACH ROW
+    EXECUTE PROCEDURE nd_private.set_updated_at ();
+
 CREATE TABLE nd.tag (
     id serial PRIMARY KEY,
-    name text NOT NULL UNIQUE CHECK (char_length(name) < 255)
+    name text NOT NULL UNIQUE CHECK (char_length(name) < 255),
+    created_at timestamp DEFAULT now()
 );
 
 COMMENT ON TABLE nd.tag IS 'A tag of the post';
@@ -65,17 +101,61 @@ COMMENT ON COLUMN nd.tag.id IS 'The primary unique identifier for the tag.';
 
 COMMENT ON COLUMN nd.tag.name IS 'The name of tag.';
 
+COMMENT ON COLUMN nd.tag.created_at IS 'The time this tag was created.';
+
 CREATE TABLE nd.post_tag (
     id serial PRIMARY KEY,
     post_id integer NOT NULL REFERENCES nd.post (id),
     tag_id integer NOT NULL REFERENCES nd.tag (id),
-    CONSTRAINT UC_post_tag UNIQUE (post_id, tag_id)
+    CONSTRAINT UC_post_tag UNIQUE (post_id, tag_id),
+    created_at timestamp DEFAULT now()
 );
 
 COMMENT ON TABLE nd.post_tag IS 'The post that tagged';
 COMMENT ON COLUMN nd.post_tag.id IS 'The primary unique identifier for the post_tag';
 COMMENT ON COLUMN nd.post_tag.post_id IS 'The id of the post';
 COMMENT ON COLUMN nd.post_tag.tag_id IS 'The id of the tag';
+COMMENT ON COLUMN nd.post_tag.created_at IS 'The time that the post is tagged with a tag name.';
+
+CREATE TYPE nd.post_reaction_type as enum (
+    'LIKE',
+    'LOVE',
+    'DISLIKE'
+);
+
+CREATE TABLE nd.post_reaction (
+    id serial PRIMARY KEY,
+    author_id integer NOT NULL REFERENCES nd.person (id),
+    post_id integer NOT NULL REFERENCES nd.post (id),
+    type nd.post_reaction_type NOT NULL,
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now()
+);
+
+CREATE TABLE nd.post_comment (
+    id serial PRIMARY KEY,
+    author_id integer NOT NULL REFERENCES nd.person (id),
+    post_id integer NOT NULL REFERENCES nd.post (id),
+    content text NOT NULL,
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now()
+);
+
+CREATE TYPE nd.post_comment_reaction_type as enum (
+    'LIKE',
+    'LOVE',
+    'DISLIKE',
+    'SAD'
+);
+
+CREATE TABLE nd.post_comment_reaction (
+    id serial PRIMARY KEY,
+    author_id integer NOT NULL REFERENCES nd.person (id),
+    post_comment_id integer NOT NULL REFERENCES nd.post_comment (id),
+    type nd.post_comment_reaction_type NOT NULL,
+    created_at timestamp DEFAULT now(),
+    updated_at timestamp DEFAULT now()
+);
 
 ALTER DEFAULT privileges REVOKE EXECUTE ON functions FROM public;
 
@@ -123,30 +203,6 @@ LANGUAGE sql
 STABLE;
 
 COMMENT ON FUNCTION nd.search_posts (text) IS 'Returns posts containing a given search term.';
-
-ALTER TABLE nd.person
-    ADD COLUMN updated_at timestamp DEFAULT now();
-
-ALTER TABLE nd.post
-    ADD COLUMN updated_at timestamp DEFAULT now();
-
-CREATE FUNCTION nd_private.set_updated_at ()
-    RETURNS TRIGGER
-    AS $$
-BEGIN
-    new.updated_at := CURRENT_TIMESTAMP;
-    RETURN new;
-END;
-$$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER person_updated_at
-    BEFORE UPDATE ON nd.person FOR EACH ROW
-    EXECUTE PROCEDURE nd_private.set_updated_at ();
-
-CREATE TRIGGER post_updated_at
-    BEFORE UPDATE ON nd.post FOR EACH ROW
-    EXECUTE PROCEDURE nd_private.set_updated_at ();
 
 CREATE TABLE nd_private.person_account (
     person_id integer PRIMARY KEY REFERENCES nd.person (id) ON DELETE CASCADE, email text NOT NULL UNIQUE CHECK (email ~* '^.+@.+\..+$'),
@@ -311,6 +367,15 @@ GRANT SELECT ON TABLE nd.post_tag TO nd_anonymous, nd_person;
 
 GRANT INSERT, UPDATE, DELETE ON TABLE nd.post_tag TO nd_person;
 
+GRANT SELECT ON TABLE nd.post_reaction TO nd_anonymous, nd_person;
+GRANT INSERT, UPDATE, DELETE ON TABLE nd.post_reaction TO nd_person;
+
+GRANT SELECT ON TABLE nd.post_comment TO nd_anonymous, nd_person;
+GRANT INSERT, UPDATE, DELETE ON TABLE nd.post_comment TO nd_person;
+
+GRANT SELECT ON TABLE nd.post_comment_reaction TO nd_anonymous, nd_person;
+GRANT INSERT, UPDATE, DELETE ON TABLE nd.post_comment_reaction TO nd_person;
+
 GRANT usage ON SEQUENCE nd.post_tag_id_seq
     TO nd_person;    
 
@@ -342,6 +407,8 @@ ALTER TABLE nd.person enable ROW level SECURITY;
 
 ALTER TABLE nd.post enable ROW level SECURITY;
 
+ALTER TABLE nd.post_reaction enable ROW level SECURITY;
+
 CREATE POLICY select_person ON nd.person FOR SELECT USING (TRUE);
 
 CREATE POLICY select_post ON nd.post FOR SELECT USING (TRUE);
@@ -355,5 +422,23 @@ CREATE POLICY insert_post ON nd.post FOR INSERT TO nd_person WITH CHECK (author_
 CREATE POLICY update_post ON nd.post FOR UPDATE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
 
 CREATE POLICY delete_post ON nd.post FOR DELETE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY insert_post_reaction ON nd.post_reaction FOR INSERT TO nd_person WITH CHECK (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY update_post_reaction ON nd.post_reaction FOR UPDATE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY delete_post_reaction ON nd.post_reaction FOR DELETE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY insert_post_comment ON nd.post_comment FOR INSERT TO nd_person WITH CHECK (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY update_post_comment ON nd.post_comment FOR UPDATE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY delete_post_comment ON nd.post_comment FOR DELETE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY insert_post_comment_reaction ON nd.post_comment_reaction FOR INSERT TO nd_person WITH CHECK (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY update_post_comment_reaction ON nd.post_comment_reaction FOR UPDATE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
+
+CREATE POLICY delete_post_comment_reaction ON nd.post_comment_reaction FOR DELETE TO nd_person USING (author_id = current_setting('jwt.claims.person_id', TRUE)::integer);
 
 COMMIT;
