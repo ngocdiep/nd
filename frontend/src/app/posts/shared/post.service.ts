@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import gql from 'graphql-tag';
 import { Apollo } from 'apollo-angular';
-import { TokenService } from 'src/app/core';
-import { AuthService } from 'src/app/auth/shared/auth.service';
+import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/shared/auth.service';
 
 const createPost = gql`
 mutation ($title: String!, $content: String, $summary: String, $authorId: Int!, $tags: [String!]!) {
@@ -95,21 +94,20 @@ export class PostService {
     });
   }
 
-  getComments(postId: number, offset: number, first: number) {
+  getComments(postId: number, parentId: Number, offset: number, first: number, offsetReplies: number, firstReplies: number) {
     return this.apollo.query({
       query: gql`
-        query($id: Int!, $offset: Int, $first: Int) {
-          postById(id: $id) {
-            id
-            postCommentsByPostId(offset: $offset, first: $first) {
-              nodes {
-                id
-                content
-                postCommentsByParentId {
-                  nodes {
-                    id
-                    content
-                  }
+        query ($postId: Int, $parentId: Int, $offset: Int, $first: Int, $offsetReplies: Int, $firstReplies: Int) {
+          allPostComments(offset: $offset, first: $first, condition: {postId: $postId, parentId: $parentId}, orderBy: CREATED_AT_ASC) {
+            totalCount
+            nodes {
+              id
+              content
+              postCommentsByParentId(offset: $offsetReplies, first: $firstReplies) {
+                totalCount
+                nodes {
+                  id
+                  content
                 }
               }
             }
@@ -117,9 +115,12 @@ export class PostService {
         }
       `,
       variables: {
-        id: postId,
+        postId: postId,
+        parentId: parentId,
         offset: offset,
-        first: first
+        first: first,
+        offsetReplies: offsetReplies,
+        firstReplies: firstReplies
       }
     });
   }

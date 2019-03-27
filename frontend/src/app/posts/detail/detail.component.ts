@@ -20,7 +20,7 @@ export class DetailComponent implements OnInit {
   postId: number;
   form: FormGroup;
   comments = [];
-  getCommentsParam = {offset: 0, first: 3};
+  getCommentsParam = { offset: 0, first: 3 };
 
   constructor(
     private route: ActivatedRoute,
@@ -40,9 +40,11 @@ export class DetailComponent implements OnInit {
       });
     });
 
-    this.postService.getComments(this.postId, this.getCommentsParam.offset, this.getCommentsParam.first).subscribe(
+    this.postService.getComments(this.postId, null, this.getCommentsParam.offset, this.getCommentsParam.first, 0, 1).subscribe(
       result => {
-        this.comments = result.data['postById'].postCommentsByPostId.nodes;
+        this.comments = result.data['allPostComments'].nodes;
+        console.log(this.comments);
+
       }
     );
 
