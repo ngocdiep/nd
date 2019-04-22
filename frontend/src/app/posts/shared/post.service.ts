@@ -100,14 +100,22 @@ export class PostService {
         query ($postId: Int, $parentId: Int, $offset: Int, $first: Int, $offsetReplies: Int, $firstReplies: Int) {
           allPostComments(offset: $offset, first: $first, condition: {postId: $postId, parentId: $parentId}, orderBy: CREATED_AT_ASC) {
             totalCount
+            pageInfo {
+              hasNextPage
+            }
             nodes {
               id
               content
+              parentId
               postCommentsByParentId(offset: $offsetReplies, first: $firstReplies) {
                 totalCount
+                pageInfo {
+                  hasNextPage
+                }
                 nodes {
                   id
                   content
+                  parentId
                 }
               }
             }

@@ -42,7 +42,7 @@ export class DetailComponent implements OnInit {
 
     this.postService.getComments(this.postId, null, this.getCommentsParam.offset, this.getCommentsParam.first, 0, 1).subscribe(
       result => {
-        this.comments = result.data['allPostComments'].nodes;
+        this.comments = result.data['allPostComments'];
         console.log(this.comments);
 
       }

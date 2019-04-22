@@ -2,8 +2,8 @@
   <h2>{{(postView | async)?.title}}</h2>
   <p [innerHTML]="(postView | async)?.content | safeHtml"> </p>
   <div class="comments">
-    <h3>Comments</h3>
-    <app-comment-list [comments]="comments" [postId]="postId"></app-comment-list>
+    <h3>Comments ({{comments.totalCount}})</h3>
+    <app-comment-list [comments]="comments" [postId]="postId" [currentOffset]="getCommentsParam.offset"></app-comment-list>
     <form [formGroup]="form" (ngSubmit)="addComment()">
         <quill-editor #contentInput style="width: 100%; height: 1000px;" placeholder="Enter Content" id="content"
         formControlName="content"></quill-editor>
