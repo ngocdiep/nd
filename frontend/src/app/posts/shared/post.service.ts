@@ -116,6 +116,12 @@ export class PostService {
                   id
                   content
                   parentId
+                  postCommentsByParentId {
+                    totalCount
+                    pageInfo {
+                      hasNextPage
+                    }
+                  }
                 }
               }
             }

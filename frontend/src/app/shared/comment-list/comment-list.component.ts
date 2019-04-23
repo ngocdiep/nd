@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/auth/shared/auth.service';
 export class CommentListComponent implements OnInit {
 
   @Input()
-  comments: {totalCount: number, pageInfo: {hasNextPage: boolean}, nodes: [any]};
+  comments: { totalCount: number, pageInfo: { hasNextPage: boolean }, nodes: [any] };
   @Input()
   postId: number;
   @Input()
@@ -38,19 +38,32 @@ export class CommentListComponent implements OnInit {
     this.showReply[id] = !this.showReply[id];
   }
 
-  addReply(commentId: number) {
+  addReply(nodes: any[], commentId: number) {
     this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
       .subscribe(result => {
         console.log(result);
+        nodes.push({
+          id: result.data.createPostComment.postComment.id, content: this.form.value, parentId: commentId,
+          postCommentsByParentId: {
+            totalCount: 0,
+            pageInfo: {
+              hasNextPage: true,
+            }, nodes: []
+          }
+        });
       });
   }
 
-  showMoreComments(parentId: number) {
-    this.currentOffset += 3;
-    this.postService.getComments(this.postId, parentId, this.currentOffset, 3, 0, 1).subscribe(
+  showMoreComments2(p: any, parentId: number, nextOffset: number) {
+    this.postService.getComments(this.postId, parentId, nextOffset, 3, 0, 1).subscribe(
       result => {
         const a: [any] = result.data['allPostComments'].nodes;
-        this.comments.nodes.push(...a);
+        if (p.postCommentsByParentId.nodes) {
+          p.postCommentsByParentId.nodes.push(...a);
+        } else {
+          p.postCommentsByParentId.nodes = a;
+        }
+        p.postCommentsByParentId.pageInfo = result.data['allPostComments'].pageInfo;
         console.log(this.comments.nodes.length);
       }
     );
