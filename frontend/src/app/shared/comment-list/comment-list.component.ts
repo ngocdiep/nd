@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { PostService } from 'src/app/posts/shared/post.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/shared/auth.service';
+import { PostService } from 'src/app/posts/shared/post.service';
 
 @Component({
   selector: 'app-comment-list',
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/auth/shared/auth.service';
 export class CommentListComponent implements OnInit {
 
   @Input()
-  comments: { totalCount: number, pageInfo: { hasNextPage: boolean }, nodes: [any] };
+  comments: { totalCount: number, pageInfo: { hasNextPage: boolean }, nodes: any[] };
   @Input()
   postId: number;
   @Input()
@@ -41,13 +41,12 @@ export class CommentListComponent implements OnInit {
   addReply(nodes: any[], commentId: number) {
     this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
       .subscribe(result => {
-        console.log(result);
-        nodes.push({
-          id: result.data.createPostComment.postComment.id, content: this.form.value, parentId: commentId,
+        nodes.splice(0, 0, {
+          id: result.data.createPostComment.postComment.id, content: this.form.value.content, parentId: commentId,
           postCommentsByParentId: {
             totalCount: 0,
             pageInfo: {
-              hasNextPage: true,
+              hasNextPage: false,
             }, nodes: []
           }
         });
@@ -57,14 +56,13 @@ export class CommentListComponent implements OnInit {
   showMoreComments2(p: any, parentId: number, nextOffset: number) {
     this.postService.getComments(this.postId, parentId, nextOffset, 3, 0, 1).subscribe(
       result => {
-        const a: [any] = result.data['allPostComments'].nodes;
+        const moreNodes: [any] = result.data['allPostComments'].nodes;
         if (p.postCommentsByParentId.nodes) {
-          p.postCommentsByParentId.nodes.push(...a);
+          p.postCommentsByParentId.nodes.push(...moreNodes);
         } else {
-          p.postCommentsByParentId.nodes = a;
+          p.postCommentsByParentId.nodes = moreNodes;
         }
         p.postCommentsByParentId.pageInfo = result.data['allPostComments'].pageInfo;
-        console.log(this.comments.nodes.length);
       }
     );
   }

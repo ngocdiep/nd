@@ -19,7 +19,7 @@ export class DetailComponent implements OnInit {
   postView: Observable<PostView>;
   postId: number;
   form: FormGroup;
-  comments: any = {};
+  comments: { totalCount: number, pageInfo: { hasNextPage: boolean }, nodes: any[] };
   getCommentsParam = { offset: 0, first: 3 };
 
   constructor(
@@ -56,11 +56,11 @@ export class DetailComponent implements OnInit {
   addComment() {
     this.postService.addComment(this.authService.currentUserSubject.getValue().id, this.postId, this.form.value)
       .subscribe(result => {
-        this.comments.nodes.push({
+        this.comments.nodes.splice(0, 0, {
           id: result.data.createPostComment.postComment.id, content: this.form.value.content, parentId: null, postCommentsByParentId: {
             totalCount: 0,
             pageInfo: {
-              hasNextPage: true,
+              hasNextPage: false,
             }, nodes: []
           }
         });
@@ -72,17 +72,16 @@ export class DetailComponent implements OnInit {
     this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
       .subscribe(result => {
         console.log(result);
-        nodes.push({ id: result.data.createPostComment.postComment.id, content: this.form.value });
+        nodes.splice(0, 0, { id: result.data.createPostComment.postComment.id, content: this.form.value });
       });
   }
 
   showMoreComments(parentId: number, nextOffset: number) {
     this.postService.getComments(this.postId, parentId, nextOffset, 3, 0, 1).subscribe(
       result => {
-        const a: [any] = result.data['allPostComments'].nodes;
-        this.comments.nodes.push(...a);
+        const moreNodes: any[] = result.data['allPostComments'].nodes;
+        this.comments.nodes.push(...moreNodes);
         this.comments.pageInfo = result.data['allPostComments'].pageInfo;
-        console.log(this.comments.nodes.length);
       }
     );
   }

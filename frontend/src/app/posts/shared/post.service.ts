@@ -98,7 +98,7 @@ export class PostService {
     return this.apollo.query({
       query: gql`
         query ($postId: Int, $parentId: Int, $offset: Int, $first: Int, $offsetReplies: Int, $firstReplies: Int) {
-          allPostComments(offset: $offset, first: $first, condition: {postId: $postId, parentId: $parentId}, orderBy: CREATED_AT_ASC) {
+          allPostComments(offset: $offset, first: $first, condition: {postId: $postId, parentId: $parentId}, orderBy: CREATED_AT_DESC) {
             totalCount
             pageInfo {
               hasNextPage
@@ -107,7 +107,7 @@ export class PostService {
               id
               content
               parentId
-              postCommentsByParentId(offset: $offsetReplies, first: $firstReplies) {
+              postCommentsByParentId(offset: $offsetReplies, first: $firstReplies, orderBy: CREATED_AT_DESC) {
                 totalCount
                 pageInfo {
                   hasNextPage
