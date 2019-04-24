@@ -3,20 +3,20 @@
     <p [innerHTML]="comment.content | safeHtml"></p>
     <div class="replies" *ngIf="comment.postCommentsByParentId.nodes">
       <button *ngIf="comment.postCommentsByParentId.pageInfo.hasNextPage"
-        (click)="showMoreComments2(comment, comment.postCommentsByParentId.nodes[0].parentId, comment.postCommentsByParentId.nodes.length)">
-        Show replies3
+        (click)="showMoreReplies(comment.postCommentsByParentId, comment.postCommentsByParentId.nodes[0].parentId, comment.postCommentsByParentId.nodes.length)">
+        Show replies
         ({{comment.postCommentsByParentId.totalCount - comment.postCommentsByParentId.nodes.length}})</button>
       <div *ngFor="let reply of comment.postCommentsByParentId.nodes.slice().reverse()">
         <p [innerHTML]="reply.content | safeHtml"></p>
         <div class="replies">
           <ng-container *ngIf="reply.postCommentsByParentId.nodes; else showReplies">
             <button *ngIf="reply.postCommentsByParentId.totalCount > reply.postCommentsByParentId.nodes.length"
-              (click)="showMoreComments2(reply, reply.id, reply.postCommentsByParentId.nodes.length)">Show replies1
+              (click)="showMoreReplies(reply.postCommentsByParentId, reply.id, reply.postCommentsByParentId.nodes.length)">Show replies
               ({{reply.postCommentsByParentId.totalCount - reply.postCommentsByParentId.nodes.length}})</button>
           </ng-container>
           <ng-template #showReplies>
             <button *ngIf="reply.postCommentsByParentId.totalCount > 0"
-              (click)="showMoreComments2(reply, reply.id, 0)">Show replies2
+              (click)="showMoreReplies(reply.postCommentsByParentId, reply.id, 0)">Show replies
               ({{reply.postCommentsByParentId.totalCount}})</button>
           </ng-template>
         </div>
@@ -27,7 +27,7 @@
         <div class="reply">
           <button (click)="showReplyForm(reply.id)">Reply</button>
           <form *ngIf="showReply[reply.id]" [formGroup]="form"
-            (ngSubmit)="addReply(reply.postCommentsByParentId.nodes, reply.id)">
+            (ngSubmit)="addReply(reply.postCommentsByParentId, reply.id)">
             <quill-editor #contentInput style="width: 100%; height: 1000px;" placeholder="Enter Content" id="content"
               formControlName="content"></quill-editor>
             <input type="submit" value="Comment">
@@ -36,9 +36,9 @@
       </div>
     </div>
     <div class="reply">
-      <button (click)="showReplyForm(comment.id)">Reply1</button>
+      <button (click)="showReplyForm(comment.id)">Reply</button>
       <form *ngIf="showReply[comment.id]" [formGroup]="form"
-        (ngSubmit)="addReply(comment.postCommentsByParentId.nodes, comment.id)">
+        (ngSubmit)="addReply(comment.postCommentsByParentId, comment.id)">
         <quill-editor #contentInput style="width: 100%; height: 1000px;" placeholder="Enter Content" id="content"
           formControlName="content"></quill-editor>
         <input type="submit" value="Comment">

@@ -38,10 +38,10 @@ export class CommentListComponent implements OnInit {
     this.showReply[id] = !this.showReply[id];
   }
 
-  addReply(nodes: any[], commentId: number) {
+  addReply(parentComment: any, commentId: number) {
     this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
       .subscribe(result => {
-        nodes.splice(0, 0, {
+        const newReply = {
           id: result.data.createPostComment.postComment.id, content: this.form.value.content, parentId: commentId,
           postCommentsByParentId: {
             totalCount: 0,
@@ -49,20 +49,25 @@ export class CommentListComponent implements OnInit {
               hasNextPage: false,
             }, nodes: []
           }
-        });
+        };
+        if (parentComment.nodes) {
+          parentComment.nodes.splice(0, 0, newReply);
+        } else {
+          parentComment.nodes = [newReply];
+        }
       });
   }
 
-  showMoreComments2(p: any, parentId: number, nextOffset: number) {
+  showMoreReplies(parentComment: any, parentId: number, nextOffset: number) {
     this.postService.getComments(this.postId, parentId, nextOffset, 3, 0, 1).subscribe(
       result => {
         const moreNodes: [any] = result.data['allPostComments'].nodes;
-        if (p.postCommentsByParentId.nodes) {
-          p.postCommentsByParentId.nodes.push(...moreNodes);
+        if (parentComment.nodes) {
+          parentComment.nodes.push(...moreNodes);
         } else {
-          p.postCommentsByParentId.nodes = moreNodes;
+          parentComment.nodes = moreNodes;
         }
-        p.postCommentsByParentId.pageInfo = result.data['allPostComments'].pageInfo;
+        parentComment.pageInfo = result.data['allPostComments'].pageInfo;
       }
     );
   }
