@@ -55,6 +55,7 @@ export class CommentListComponent implements OnInit {
         } else {
           parentComment.nodes = [newReply];
         }
+        parentComment.totalCount += 1;
       });
   }
 

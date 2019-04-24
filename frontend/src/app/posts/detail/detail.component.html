@@ -4,8 +4,7 @@
   <div class="comments" *ngIf="comments">
     <h3>Comments ({{comments.totalCount}})</h3>
     <button *ngIf="comments.nodes && comments.pageInfo.hasNextPage"
-      (click)="showMoreComments(comments.nodes[0].parentId, comments.nodes.length)">Show more comments
-      p</button>
+      (click)="showMoreComments(comments.nodes[0].parentId, comments.nodes.length)">Show comments ({{comments.totalCount - comments.nodes.length}})</button>
     <app-comment-list [comments]="comments" [postId]="postId" [currentOffset]="getCommentsParam.offset">
     </app-comment-list>
     <form [formGroup]="form" (ngSubmit)="addComment()">

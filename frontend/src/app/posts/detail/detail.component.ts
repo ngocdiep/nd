@@ -62,6 +62,7 @@ export class DetailComponent implements OnInit {
             }, nodes: []
           }
         });
+        this.comments.totalCount += 1;
       });
   }
 
