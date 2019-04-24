@@ -65,13 +65,6 @@ export class DetailComponent implements OnInit {
       });
   }
 
-  addReply(nodes: any[], commentId: number) {
-    this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
-      .subscribe(result => {
-        nodes.splice(0, 0, { id: result.data.createPostComment.postComment.id, content: this.form.value });
-      });
-  }
-
   showMoreComments(parentId: number, nextOffset: number) {
     this.postService.getComments(this.postId, parentId, nextOffset, 3, 0, 1).subscribe(
       result => {
