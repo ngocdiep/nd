@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { PostService } from '../shared/post.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/shared/auth.service';
+import { PostService } from '../shared/post.service';
 
 export interface PostView {
   title: string;
@@ -43,8 +43,6 @@ export class DetailComponent implements OnInit {
     this.postService.getComments(this.postId, null, this.getCommentsParam.offset, this.getCommentsParam.first, 0, 1).subscribe(
       result => {
         this.comments = result.data['allPostComments'];
-        console.log(this.comments);
-
       }
     );
 
@@ -64,14 +62,12 @@ export class DetailComponent implements OnInit {
             }, nodes: []
           }
         });
-        console.log(this.comments);
       });
   }
 
   addReply(nodes: any[], commentId: number) {
     this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
       .subscribe(result => {
-        console.log(result);
         nodes.splice(0, 0, { id: result.data.createPostComment.postComment.id, content: this.form.value });
       });
   }
