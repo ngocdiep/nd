@@ -63,6 +63,7 @@ export class DetailComponent implements OnInit {
           }
         });
         this.comments.totalCount += 1;
+        this.form.controls.content.setValue(null);
       });
   }
 

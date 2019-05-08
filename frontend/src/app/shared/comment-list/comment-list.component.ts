@@ -56,6 +56,8 @@ export class CommentListComponent implements OnInit {
           parentComment.nodes = [newReply];
         }
         parentComment.totalCount += 1;
+
+        this.form.controls.content.setValue(null);
       });
   }
 
