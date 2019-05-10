@@ -1,4 +1,16 @@
+.detail {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    .content {
+        padding: 8px;
+        margin: 10px 0;
+        border: 1px solid #dddfe2;
+    }
+}
+
 ::ng-deep {
+
     img,
     video {
         max-width: 800px;

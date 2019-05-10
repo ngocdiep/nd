@@ -1,13 +1,23 @@
 <ng-container *ngIf="comments.nodes">
   <div *ngFor="let comment of comments.nodes.slice().reverse()">
-    <p [innerHTML]="comment.content | safeHtml"></p>
+    <div style="display: flex">
+      <div class="avatar">
+        <i class="fas fa-user-circle fa-3x"></i>
+      </div>
+      <div class="comment-content" [innerHTML]="comment.content | safeHtml"></div>
+    </div>
     <div class="replies" *ngIf="comment.postCommentsByParentId.nodes">
       <button *ngIf="comment.postCommentsByParentId.pageInfo.hasNextPage"
         (click)="showMoreReplies(comment.postCommentsByParentId, comment.postCommentsByParentId.nodes[0].parentId, comment.postCommentsByParentId.nodes.length)">
         Show replies
         ({{comment.postCommentsByParentId.totalCount - comment.postCommentsByParentId.nodes.length}})</button>
       <div *ngFor="let reply of comment.postCommentsByParentId.nodes.slice().reverse()">
-        <p [innerHTML]="reply.content | safeHtml"></p>
+        <div style="display: flex">
+          <div class="avatar">
+            <i class="fas fa-user-circle fa-3x"></i>
+          </div>
+          <div class="comment-content" [innerHTML]="reply.content | safeHtml"></div>
+        </div>
         <div class="replies">
           <ng-container *ngIf="reply.postCommentsByParentId.nodes; else showReplies">
             <button *ngIf="reply.postCommentsByParentId.totalCount > reply.postCommentsByParentId.nodes.length"
