@@ -21,6 +21,7 @@ export class DetailComponent implements OnInit {
   form: FormGroup;
   comments: { totalCount: number, pageInfo: { hasNextPage: boolean }, nodes: any[] };
   getCommentsParam = { offset: 0, first: 3 };
+  showComment = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,6 +50,15 @@ export class DetailComponent implements OnInit {
     this.form = this.formBuilder.group({
       content: ['', [Validators.required]],
     });
+  }
+  showCommentForm() {
+    this.showComment = !this.showComment;
+    if (this.showComment) {
+      setTimeout(() => {
+        const commentInput = document.getElementById('comment').querySelector('.ql-container').querySelector('.ql-editor');
+        (commentInput as HTMLElement).focus();
+      }, 300);
+    }
   }
 
   addComment() {

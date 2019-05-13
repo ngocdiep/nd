@@ -36,6 +36,12 @@ export class CommentListComponent implements OnInit {
 
   showReplyForm(id: number) {
     this.showReply[id] = !this.showReply[id];
+    if (this.showReply[id]) {
+      setTimeout(() => {
+        const replyInput = document.getElementById('reply-' + id).querySelector('.ql-container').querySelector('.ql-editor');
+        (replyInput as HTMLElement).focus();
+      }, 300);
+    }
   }
 
   addReply(parentComment: any, commentId: number) {

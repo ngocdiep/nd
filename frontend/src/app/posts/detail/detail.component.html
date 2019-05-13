@@ -3,14 +3,15 @@
     <h2>{{(postView | async)?.title}}</h2>
     <p [innerHTML]="(postView | async)?.content | safeHtml"> </p>
     <div class="comments" *ngIf="comments">
+        <div class="show-comment"><button (click)="showCommentForm()">Comment</button></div>
       <h3>Comments ({{comments.totalCount}})</h3>
       <button *ngIf="comments.nodes && comments.pageInfo.hasNextPage"
         (click)="showMoreComments(comments.nodes[0].parentId, comments.nodes.length)">Show comments
         ({{comments.totalCount - comments.nodes.length}})</button>
       <app-comment-list [comments]="comments" [postId]="postId" [currentOffset]="getCommentsParam.offset">
       </app-comment-list>
-      <form [formGroup]="form" (ngSubmit)="addComment()">
-        <quill-editor #contentInput placeholder="Enter Content" id="content" formControlName="content"></quill-editor>
+      <form [formGroup]="form" (ngSubmit)="addComment()" *ngIf="showComment">
+        <quill-editor #contentInput placeholder="Enter Content" id="comment" formControlName="content"></quill-editor>
         <input type="submit" value="Comment">
       </form>
     </div>
