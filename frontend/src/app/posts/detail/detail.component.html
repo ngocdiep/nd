@@ -12,7 +12,7 @@
       </app-comment-list>
       <form [formGroup]="form" (ngSubmit)="addComment()" *ngIf="showComment">
         <quill-editor #contentInput placeholder="Enter Content" id="comment" formControlName="content"></quill-editor>
-        <input type="submit" value="Comment">
+        <input [disabled]="!form.valid" type="submit" value="Comment">
       </form>
     </div>
   </div>

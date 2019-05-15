@@ -1,4 +1,5 @@
-.replies, .show-reply {
+.replies,
+.show-reply {
     padding-left: 60px;
 }
 
@@ -9,10 +10,32 @@
 .avatar {
     margin-top: 10px;
 }
+
 .comment-content {
     background-color: #e9ebee;
     border-radius: 18px;
     width: 100%;
     margin: 10px;
     padding: 0 5px;
+}
+
+button, input[type=submit] {
+    padding: 2px 8px;
+    color: #385899;
+    background-color: #E1ECF4;
+    border-color: #E1ECF4;
+    text-decoration: none;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 3px;
+    transition: all .15s ease-in-out;
+}
+
+input[type=submit] {
+    margin-top: 5px;
+}
+
+.show-more-replies {
+    margin-top: 5px;
 }

@@ -8,7 +8,7 @@
     </div>
     <div class="show-reply"><button (click)="showReplyForm(comment.id)">Reply</button></div>
     <div class="replies" *ngIf="comment.postCommentsByParentId.nodes">
-      <button *ngIf="comment.postCommentsByParentId.pageInfo.hasNextPage"
+      <button class="show-more-replies" *ngIf="comment.postCommentsByParentId.pageInfo.hasNextPage"
         (click)="showMoreReplies(comment.postCommentsByParentId, comment.postCommentsByParentId.nodes[0].parentId, comment.postCommentsByParentId.nodes.length)">
         Show replies
         ({{comment.postCommentsByParentId.totalCount - comment.postCommentsByParentId.nodes.length}})</button>
@@ -22,13 +22,13 @@
         <div class="show-reply"><button (click)="showReplyForm(reply.id)">Reply</button></div>
         <div class="replies">
           <ng-container *ngIf="reply.postCommentsByParentId.nodes; else showReplies">
-            <button *ngIf="reply.postCommentsByParentId.totalCount > reply.postCommentsByParentId.nodes.length"
+            <button class="show-more-replies" *ngIf="reply.postCommentsByParentId.totalCount > reply.postCommentsByParentId.nodes.length"
               (click)="showMoreReplies(reply.postCommentsByParentId, reply.id, reply.postCommentsByParentId.nodes.length)">Show
               replies
               ({{reply.postCommentsByParentId.totalCount - reply.postCommentsByParentId.nodes.length}})</button>
           </ng-container>
           <ng-template #showReplies>
-            <button *ngIf="reply.postCommentsByParentId.totalCount > 0"
+            <button class="show-more-replies" *ngIf="reply.postCommentsByParentId.totalCount > 0"
               (click)="showMoreReplies(reply.postCommentsByParentId, reply.id, 0)">Show replies
               ({{reply.postCommentsByParentId.totalCount}})</button>
           </ng-template>
@@ -38,19 +38,19 @@
             [postId]="postId"></app-comment-list>
         </div>
         <div class="reply">
-          <form *ngIf="showReply[reply.id]" [formGroup]="form"
+          <form *ngIf="showReply[reply.id]" [formGroup]="form[reply.id]"
             (ngSubmit)="addReply(reply.postCommentsByParentId, reply.id)">
             <quill-editor id="{{'reply-' + reply.id}}" #contentInput placeholder="Enter Content" formControlName="content"></quill-editor>
-            <input type="submit" value="Comment">
+            <input [disabled]="!form[reply.id].valid" type="submit" value="Comment">
           </form>
         </div>
       </div>
     </div>
     <div class="reply">
-      <form *ngIf="showReply[comment.id]" [formGroup]="form"
+      <form *ngIf="showReply[comment.id]" [formGroup]="form[comment.id]"
         (ngSubmit)="addReply(comment.postCommentsByParentId, comment.id)">
         <quill-editor id="{{'reply-' + comment.id}}" #contentInput placeholder="Enter Content" formControlName="content"></quill-editor>
-        <input type="submit" value="Comment">
+        <input [disabled]="!form[comment.id].valid" type="submit" value="Comment">
       </form>
     </div>
   </div>

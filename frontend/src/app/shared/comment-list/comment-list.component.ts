@@ -17,7 +17,7 @@ export class CommentListComponent implements OnInit {
   @Input()
   currentOffset: number;
 
-  form: FormGroup;
+  form = {};
   showReply = {};
   @Output()
   getMoreComments = new EventEmitter<any>();
@@ -29,14 +29,17 @@ export class CommentListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.form = this.formBuilder.group({
-      content: ['', [Validators.required]],
-    });
   }
 
   showReplyForm(id: number) {
     this.showReply[id] = !this.showReply[id];
     if (this.showReply[id]) {
+      if (!this.form[id]) {
+        this.form[id] = this.formBuilder.group({
+          content: ['', [Validators.required]],
+        });
+      }
+
       setTimeout(() => {
         const replyInput = document.getElementById('reply-' + id).querySelector('.ql-container').querySelector('.ql-editor');
         (replyInput as HTMLElement).focus();
@@ -45,10 +48,10 @@ export class CommentListComponent implements OnInit {
   }
 
   addReply(parentComment: any, commentId: number) {
-    this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form.value)
+    this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form[commentId].value)
       .subscribe(result => {
         const newReply = {
-          id: result.data.createPostComment.postComment.id, content: this.form.value.content, parentId: commentId,
+          id: result.data.createPostComment.postComment.id, content: this.form[commentId].value.content, parentId: commentId,
           postCommentsByParentId: {
             totalCount: 0,
             pageInfo: {
@@ -63,7 +66,7 @@ export class CommentListComponent implements OnInit {
         }
         parentComment.totalCount += 1;
 
-        this.form.controls.content.setValue(null);
+        this.form[commentId].controls.content.setValue(null);
       });
   }
 
