@@ -4,9 +4,19 @@
       <div class="avatar">
         <i class="fas fa-user-circle fa-3x"></i>
       </div>
-      <div class="comment-content" [innerHTML]="comment.content | safeHtml"></div>
+      <div style="display: flex; width: 100%">
+        <div class="comment-content" [innerHTML]="comment.content | safeHtml"></div>
+        <div class="dropdown comment-actions">
+          <span>...</span>
+          <div class="dropdown-content">
+            <div *ngIf="(authService.currentUser | async).id === comment.authorId">Edit</div>
+            <div *ngIf="(authService.currentUser | async).id === comment.authorId">Delete</div>
+            <div *ngIf="(authService.currentUser | async).id !== comment.authorId">Report</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="show-reply"><button (click)="showReplyForm(comment.id)">Reply</button></div>
+    <div *ngIf="authService.isAuthenticated | async" class="show-reply"><button (click)="showReplyForm(comment.id)">Reply</button></div>
     <div class="replies" *ngIf="comment.postCommentsByParentId.nodes">
       <button class="show-more-replies" *ngIf="comment.postCommentsByParentId.pageInfo.hasNextPage"
         (click)="showMoreReplies(comment.postCommentsByParentId, comment.postCommentsByParentId.nodes[0].parentId, comment.postCommentsByParentId.nodes.length)">
@@ -19,7 +29,7 @@
           </div>
           <div class="comment-content" [innerHTML]="reply.content | safeHtml"></div>
         </div>
-        <div class="show-reply"><button (click)="showReplyForm(reply.id)">Reply</button></div>
+        <div *ngIf="authService.isAuthenticated | async" class="show-reply"><button (click)="showReplyForm(reply.id)">Reply</button></div>
         <div class="replies">
           <ng-container *ngIf="reply.postCommentsByParentId.nodes; else showReplies">
             <button class="show-more-replies" *ngIf="reply.postCommentsByParentId.totalCount > reply.postCommentsByParentId.nodes.length"
@@ -28,18 +38,15 @@
               ({{reply.postCommentsByParentId.totalCount - reply.postCommentsByParentId.nodes.length}})</button>
           </ng-container>
           <ng-template #showReplies>
-            <button class="show-more-replies" *ngIf="reply.postCommentsByParentId.totalCount > 0"
-              (click)="showMoreReplies(reply.postCommentsByParentId, reply.id, 0)">Show replies
+            <button class="show-more-replies" *ngIf="reply.postCommentsByParentId.totalCount > 0" (click)="showMoreReplies(reply.postCommentsByParentId, reply.id, 0)">Show replies
               ({{reply.postCommentsByParentId.totalCount}})</button>
           </ng-template>
         </div>
         <div class="replies">
-          <app-comment-list *ngIf="reply.postCommentsByParentId.nodes" [comments]="reply.postCommentsByParentId"
-            [postId]="postId"></app-comment-list>
+          <app-comment-list *ngIf="reply.postCommentsByParentId.nodes" [comments]="reply.postCommentsByParentId" [postId]="postId"></app-comment-list>
         </div>
         <div class="reply">
-          <form *ngIf="showReply[reply.id]" [formGroup]="form[reply.id]"
-            (ngSubmit)="addReply(reply.postCommentsByParentId, reply.id)">
+          <form *ngIf="showReply[reply.id]" [formGroup]="form[reply.id]" (ngSubmit)="addReply(reply.postCommentsByParentId, reply.id)">
             <quill-editor id="{{'reply-' + reply.id}}" #contentInput placeholder="Enter Content" formControlName="content"></quill-editor>
             <input [disabled]="!form[reply.id].valid" type="submit" value="Comment">
           </form>
@@ -47,8 +54,7 @@
       </div>
     </div>
     <div class="reply">
-      <form *ngIf="showReply[comment.id]" [formGroup]="form[comment.id]"
-        (ngSubmit)="addReply(comment.postCommentsByParentId, comment.id)">
+      <form *ngIf="showReply[comment.id]" [formGroup]="form[comment.id]" (ngSubmit)="addReply(comment.postCommentsByParentId, comment.id)">
         <quill-editor id="{{'reply-' + comment.id}}" #contentInput placeholder="Enter Content" formControlName="content"></quill-editor>
         <input [disabled]="!form[comment.id].valid" type="submit" value="Comment">
       </form>

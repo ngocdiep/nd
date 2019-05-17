@@ -17,8 +17,9 @@ mutation ($title: String!, $content: String, $summary: String, $authorId: Int!, 
 const getById = gql`
 query($id: Int!) {
   postById(id: $id) {
-    title,
+    title
     content
+    authorId
   }
 }
 `;
@@ -31,6 +32,7 @@ query ($offset: Int, $first: Int) {
         id
         title
         summary
+        authorId
         postTagsByPostId {
           nodes {
             tagByTagId {
@@ -107,6 +109,7 @@ export class PostService {
               id
               content
               parentId
+              authorId
               postCommentsByParentId(offset: $offsetReplies, first: $firstReplies, orderBy: CREATED_AT_DESC) {
                 totalCount
                 pageInfo {
