@@ -119,6 +119,7 @@ export class PostService {
                   id
                   content
                   parentId
+                  authorId
                   postCommentsByParentId {
                     totalCount
                     pageInfo {

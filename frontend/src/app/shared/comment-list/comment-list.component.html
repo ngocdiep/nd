@@ -16,7 +16,10 @@
         </div>
       </div>
     </div>
-    <div *ngIf="authService.isAuthenticated | async" class="show-reply"><button (click)="showReplyForm(comment.id)">Reply</button></div>
+    <div class="interact" style="display: flex">
+      <div *ngIf="authService.isAuthenticated | async" class="react"><button>Like</button></div>
+      <div *ngIf="authService.isAuthenticated | async" class="show-reply"><button (click)="showReplyForm(comment.id)">Reply</button></div>
+    </div>
     <div class="replies" *ngIf="comment.postCommentsByParentId.nodes">
       <button class="show-more-replies" *ngIf="comment.postCommentsByParentId.pageInfo.hasNextPage"
         (click)="showMoreReplies(comment.postCommentsByParentId, comment.postCommentsByParentId.nodes[0].parentId, comment.postCommentsByParentId.nodes.length)">
@@ -27,7 +30,17 @@
           <div class="avatar">
             <i class="fas fa-user-circle fa-3x"></i>
           </div>
-          <div class="comment-content" [innerHTML]="reply.content | safeHtml"></div>
+          <div style="display: flex; width: 100%">
+            <div class="comment-content" [innerHTML]="reply.content | safeHtml"></div>
+            <div class="dropdown comment-actions">
+              <span>...</span>
+              <div class="dropdown-content">
+                <div *ngIf="(authService.currentUser | async).id === reply.authorId">Edit</div>
+                <div *ngIf="(authService.currentUser | async).id === reply.authorId">Delete</div>
+                <div *ngIf="(authService.currentUser | async).id !== reply.authorId">Report</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div *ngIf="authService.isAuthenticated | async" class="show-reply"><button (click)="showReplyForm(reply.id)">Reply</button></div>
         <div class="replies">

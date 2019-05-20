@@ -1,6 +1,10 @@
 .replies,
-.show-reply {
+.interact {
     padding-left: 60px;
+
+    .react {
+        margin-right: 5px;
+    }
 }
 
 .reply {
@@ -19,7 +23,8 @@
     padding: 0 5px;
 }
 
-button, input[type=submit] {
+button,
+input[type=submit] {
     padding: 2px 8px;
     color: #385899;
     background-color: #E1ECF4;
@@ -32,7 +37,8 @@ button, input[type=submit] {
     transition: all .15s ease-in-out;
 }
 
-form, input[type=submit] {
+form,
+input[type=submit] {
     margin-top: 5px;
 }
 
@@ -49,6 +55,7 @@ form, input[type=submit] {
     position: relative;
     display: inline-block;
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -57,18 +64,22 @@ form, input[type=submit] {
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
+
 .dropdown-content div {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
+
 .dropdown-content div:hover {
     background-color: #f1f1f1;
 }
+
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
 .dropdown:hover .dropbtn {
     background-color: transparent;
 }
