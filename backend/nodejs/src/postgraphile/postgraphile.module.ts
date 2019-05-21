@@ -1,10 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import postgraphile from 'postgraphile';
-import { ConfigService } from '../config.service';
-import { ConfigModule } from '../config.module';
 import { PoolConfig } from 'pg';
+import postgraphile from 'postgraphile';
+import { ConfigModule } from '../config.module';
+import { ConfigService } from '../config.service';
 const UPLOAD_DIR_NAME = 'storage/files';
 
 @Module({
@@ -17,24 +17,17 @@ const UPLOAD_DIR_NAME = 'storage/files';
 export class PostgraphileModule implements NestModule {
     constructor(
         private configService: ConfigService,
-    ) {
-
-    }
+    ) { }
     public configure(consumer: MiddlewareConsumer) {
-        /* const dbUrl = 'postgres://' + this.configService.get('DATABASE_USER') + ':' + this.configService.get('DATABASE_PASSWORD')
-            + '@' + this.configService.get('DATABASE_HOST') +
-            ':' + this.configService.get('DATABASE_PORT') + '/' + this.configService.get('DATABASE_NAME'); */
-
-        const p: PoolConfig = {
-            user: 'nd_postgraphile',
-            password: 'Abcd1234',
-            database: 'nd',
-            host: '/cloudsql/nd-app-241203:asia-southeast1:nd-app-db',
+        const poolConfig: PoolConfig = {
+            user: this.configService.get('DATABASE_USER'),
+            password: this.configService.get('DATABASE_PASSWORD'),
+            database: this.configService.get('DATABASE_NAME'),
+            host: this.configService.get('DATABASE_HOST'),
         };
-        const dbUrl = 'postgresql://nd_postgraphile:Abcd1234@host/nd?socket=/cloudsql/nd-app-241203:asia-southeast1:nd-app-db';
         const PostGraphileUploadFieldPlugin = require('postgraphile-plugin-upload-field');
         consumer
-            .apply(postgraphile(p, ['nd', 'nd_private'], {
+            .apply(postgraphile(poolConfig, ['nd', 'nd_private'], {
                 graphiql: true,
                 graphiqlRoute: '/graphiql',
                 enableCors: true,

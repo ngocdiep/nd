@@ -3,9 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  backend_url: 'http://localhost:5000/graphql'
+  production: true,
+  api_url: '/graphql',
+  backend_url: ''
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file

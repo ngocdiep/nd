@@ -1,0 +1,10 @@
+{
+    "/graphql": {
+        "target": "http://localhost:5000",
+        "secure": false
+    },
+    "/storage": {
+        "target": "http://localhost:5000",
+        "secure": false
+    }
+}
