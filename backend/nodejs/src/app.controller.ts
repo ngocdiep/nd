@@ -13,7 +13,7 @@ export class AppController {
   @Get('*')
   root(@Res() response): void {
     // the homepage will load our index.html which contains angular logic
-    response.sendFile(join(__dirname, '../web-app/index.html'));
+    response.sendFile(join(__dirname, '../frontend/index.html'));
   }
 
 }

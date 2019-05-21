@@ -1,0 +1,12 @@
+# [START app_yaml]
+runtime: nodejs10
+# env: flex
+beta_settings:
+  cloud_sql_instances: nd-app-241203:asia-southeast1:nd-app-db
+env_variables:
+  DATABASE_HOST: /cloudsql/nd-app-241203:asia-southeast1:nd-app-db
+  DATABASE_PORT: 5432
+  DATABASE_NAME: nd
+  DATABASE_USER: nd_postgraphile
+  DATABASE_PASSWORD: Abcd1234
+# [END app_yaml]

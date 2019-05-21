@@ -8,8 +8,9 @@ import { TokenService } from './core';
 import { createAuthLink } from './graphql/middlewares/auth';
 import { ModalService } from './core/services/modal.service';
 import { createErrorLink } from './graphql/middlewares/error';
+import { environment } from 'src/environments/environment.prod';
 
-const uri = 'http://localhost:5000/graphql'; // <-- add the URL of the GraphQL server here
+const uri = environment.api_url; // <-- add the URL of the GraphQL server here
 // const uri = '/graphql';
 
 @NgModule({

@@ -1,0 +1,18 @@
+version: "3"
+services:
+  flyway:
+    image: boxfuse/flyway:5.2.4
+    command: migrate
+    volumes:
+      - ./backend/flyway:/flyway/conf
+      - ./backend/flyway/database/migrations:/flyway/sql
+    depends_on:
+      - db  
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: nd
+      POSTGRES_PASSWORD: 123123
+    ports:
+      - "5433:5432"
+    

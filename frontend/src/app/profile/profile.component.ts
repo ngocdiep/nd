@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { ProfileService } from './profile.service';
 import { distinctUntilChanged } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 interface UserProfile {
   id: number;
@@ -23,12 +24,16 @@ export class ProfileComponent implements OnInit {
     = new BehaviorSubject({ firstName: false, lastName: false, birthday: false });
   processing = this.processingSubject.asObservable().pipe(distinctUntilChanged());
   userProfile: Observable<UserProfile>;
+  backendUrl: string;
+
   constructor(private profileService: ProfileService) { }
 
   ngOnInit() {
     this.profileService.getUserProfile().subscribe(result => {
       this.userProfile = of(result.data['currentPerson'] as UserProfile);
     });
+
+    this.backendUrl = environment.backend_url;
   }
 
   updateFirstName(firstName: string, editFirstName, firstNameInput) {

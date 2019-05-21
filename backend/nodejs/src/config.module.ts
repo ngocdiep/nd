@@ -6,9 +6,9 @@ import * as path from 'path';
   providers: [
     {
       provide: ConfigService,
-      // useValue: new ConfigService(`./environments/${process.env.NODE_ENV}.env`),
-      useValue: new ConfigService(`./environments/production.env`),
+      useValue: new ConfigService(path.join(process.cwd(), `./environments/production.env`)),
       // useValue: new ConfigService(path.join(process.cwd(), `./environments/development.env`)),
+      // useValue: new ConfigService(path.join(process.cwd(), `./environments/docker.env`)),
     },
   ],
   exports: [ConfigService],

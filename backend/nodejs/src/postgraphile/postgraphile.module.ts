@@ -4,6 +4,7 @@ import * as path from 'path';
 import postgraphile from 'postgraphile';
 import { ConfigService } from '../config.service';
 import { ConfigModule } from '../config.module';
+import { PoolConfig } from 'pg';
 const UPLOAD_DIR_NAME = 'storage/files';
 
 @Module({
@@ -20,12 +21,20 @@ export class PostgraphileModule implements NestModule {
 
     }
     public configure(consumer: MiddlewareConsumer) {
-        const dbUrl = 'postgres://' + this.configService.get('DATABASE_USER') + ':' + this.configService.get('DATABASE_PASSWORD')
+        /* const dbUrl = 'postgres://' + this.configService.get('DATABASE_USER') + ':' + this.configService.get('DATABASE_PASSWORD')
             + '@' + this.configService.get('DATABASE_HOST') +
-            ':' + this.configService.get('DATABASE_PORT') + '/' + this.configService.get('DATABASE_NAME');
+            ':' + this.configService.get('DATABASE_PORT') + '/' + this.configService.get('DATABASE_NAME'); */
+
+        const p: PoolConfig = {
+            user: 'nd_postgraphile',
+            password: 'Abcd1234',
+            database: 'nd',
+            host: '/cloudsql/nd-app-241203:asia-southeast1:nd-app-db',
+        };
+        const dbUrl = 'postgresql://nd_postgraphile:Abcd1234@host/nd?socket=/cloudsql/nd-app-241203:asia-southeast1:nd-app-db';
         const PostGraphileUploadFieldPlugin = require('postgraphile-plugin-upload-field');
         consumer
-            .apply(postgraphile(dbUrl, ['nd', 'nd_private'], {
+            .apply(postgraphile(p, ['nd', 'nd_private'], {
                 graphiql: true,
                 graphiqlRoute: '/graphiql',
                 enableCors: true,
