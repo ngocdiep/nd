@@ -26,6 +26,8 @@ export class PostgraphileModule implements NestModule {
             host: this.configService.get('DATABASE_HOST'),
         };
         const PostGraphileUploadFieldPlugin = require('postgraphile-plugin-upload-field');
+        const ConnectionFilterPlugin = require('postgraphile-plugin-connection-filter');
+
         consumer
             .apply(postgraphile(poolConfig, ['nd', 'nd_private'], {
                 graphiql: true,
@@ -35,7 +37,8 @@ export class PostgraphileModule implements NestModule {
                 jwtSecret: 'nd_keyboard_kitten',
                 jwtPgTypeIdentifier: 'nd.jwt_token',
                 extendedErrors: ['detail', 'code'],
-                appendPlugins: [PostGraphileUploadFieldPlugin],
+                disableQueryLog: false,
+                appendPlugins: [PostGraphileUploadFieldPlugin, ConnectionFilterPlugin],
                 graphileBuildOptions: {
                     uploadFieldDefinitions: [
                         {

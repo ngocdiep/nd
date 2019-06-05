@@ -199,6 +199,25 @@ STABLE;
 
 COMMENT ON FUNCTION nd.search_posts (text) IS 'Returns posts containing a given search term.';
 
+CREATE FUNCTION nd.filter_posts_by_tags (tags text[])
+    RETURNS SETOF nd.post
+    AS $$
+    SELECT
+        post.*
+    FROM
+        nd.post AS post
+    INNER JOIN nd.post_tag post_tag
+    ON post.id = post_tag.post_id
+    INNER JOIN nd.tag tag
+    ON post_tag.tag_id = tag.id
+    WHERE
+        tag.name = ANY(tags)
+$$
+LANGUAGE sql
+STABLE;
+
+COMMENT ON FUNCTION nd.filter_posts_by_tags (text[]) IS 'Returns posts belongs to one of tags.';
+
 CREATE TABLE nd_private.person_account (
     person_id integer PRIMARY KEY REFERENCES nd.person (id) ON DELETE CASCADE, email text NOT NULL UNIQUE CHECK (email ~* '^.+@.+\..+$'),
     password_hash text NOT NULL
@@ -387,6 +406,9 @@ GRANT EXECUTE ON FUNCTION nd.person_latest_post (nd.person)
 TO nd_anonymous, nd_person;
 
 GRANT EXECUTE ON FUNCTION nd.search_posts (text)
+TO nd_anonymous, nd_person;
+
+GRANT EXECUTE ON FUNCTION nd.nd.filter_posts_by_tags (text[])
 TO nd_anonymous, nd_person;
 
 GRANT EXECUTE ON FUNCTION nd.authenticate (text, text)

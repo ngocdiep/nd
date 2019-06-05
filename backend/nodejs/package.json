@@ -30,6 +30,7 @@
     "point-of-view": "^3.4.0",
     "postgraphile": "^4.4.0",
     "postgraphile-plugin-upload-field": "^1.0.0-alpha.8",
+    "postgraphile-plugin-connection-filter": "^1.1.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3"
