@@ -1,11 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map, takeLast } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/shared/auth.service';
 import { TagService } from 'src/app/core/services/tag.service';
 import { PostService } from '../shared/post.service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-new',
@@ -16,7 +16,7 @@ export class NewComponent implements OnInit, OnDestroy {
   authorId: number;
   form: FormGroup;
   errors: string[] = [];
-  @ViewChild('contentInput') contentInput: ElementRef;
+  @ViewChild('contentInput', { static: true }) contentInput: ElementRef;
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,

@@ -1,12 +1,16 @@
+.main {
+    display: flex;
+    margin-top: 10px;
+}
 .hidden{
-    display:none;
+    display: none;
 }
 .show{
-    display:block;
+    display: block;
 }
 
 #modal-container {
-    position:  fixed;
+    position: fixed;
     top: 300px;
     left: 50%;
     width: 375px;

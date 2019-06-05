@@ -1,32 +1,42 @@
 <div class='content-wrapper' #header>
   <div id='toolbar'>
     <div class="left">
-      <a routerLink='/' title='Home'>
-        <span>Home</span>
-      </a>
-      <form id="search-form" (ngSubmit)="onSubmit()" #searchForm="ngForm">
-        <input type='text' name="search-string" placeholder='Search here...' size='15' [(ngModel)]="model.searchString" />
-        <button type='submit' id="submit-button"><i class="fa fa-search"></i></button>
-      </form>
+      <div class="menu">
+        <a routerLink='/' title='Home'>
+          <span>Home</span>
+        </a>
+      </div>
+    </div>
+    <div class="center">
+      <div class="search-box">
+        <form id="search-form" (ngSubmit)="onSubmit()" #searchForm="ngForm">
+          <input type='text' name="search-string" placeholder='Search here...' size='15' [(ngModel)]="model.searchString" />
+          <button type='submit' id="submit-button"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
     </div>
     <div class="right">
-      <a *ngIf="isAuthenticated" routerLink='/posts/create' title='+ New Post'>
-        <span>+ New Post</span>
-      </a>
-      <a *ngIf="!isAuthenticated" routerLink='/auth/register' title='Register'>
-        <span>Register</span>
-      </a>
-      <span> | </span>
-      <a *ngIf="!isAuthenticated" routerLink='/auth/login' title='Login'>
-        <span>Login</span>
-      </a>
-      <div *ngIf="isAuthenticated" class="dropdown">
-        <button class="dropbtn"><i class="fas fa-user-circle fa-3x"></i></button>
+      <div class="dropdown">
+        <button class="dropbtn">&#9776;</button>
         <div class="dropdown-content">
-          <a routerLink="/profile">Profile</a>
-          <a href="javascript:void(0)" (click)="onLogOut()" title='Logout'>
-            <span>Logout</span>
-          </a>
+          <ng-container *ngIf="isAuthenticated; else anonymous">
+            <a *ngIf="isAuthenticated" routerLink='/posts/create' title='+ New Post'>
+              <span>+ New Post</span>
+            </a>
+            <a routerLink="/profile">Profile</a>
+            <a href="javascript:void(0)" (click)="onLogOut()" title='Logout'>
+              <span>Logout</span>
+            </a>
+          </ng-container>
+          <ng-template #anonymous>
+            <a *ngIf="!isAuthenticated" routerLink='/auth/register' title='Register'>
+              <span>Register</span>
+            </a>
+            <a *ngIf="!isAuthenticated" routerLink='/auth/login' title='Login'>
+              <span>Login</span>
+            </a>
+
+          </ng-template>
         </div>
       </div>
     </div>

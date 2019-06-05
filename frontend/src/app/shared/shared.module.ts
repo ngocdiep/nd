@@ -11,6 +11,8 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { SampleComponent } from './sample/sample.component';
+import { LoadingComponent } from './loading/loading.component';
+import { TagInputModule } from 'ngx-chips';
 
 @NgModule({
   imports: [
@@ -19,6 +21,7 @@ import { SampleComponent } from './sample/sample.component';
     ReactiveFormsModule,
     RouterModule,
     QuillModule,
+    TagInputModule,
   ],
   exports: [
     CommonModule,
@@ -26,14 +29,16 @@ import { SampleComponent } from './sample/sample.component';
     ReactiveFormsModule,
     RouterModule,
     QuillModule,
+    TagInputModule,
     ShowAuthedDirective,
     SafeHtmlPipe,
+    LoadingComponent,
     HeaderComponent,
     FileUploadComponent,
     EditInlineComponent,
     CommentListComponent,
   ],
   declarations: [SampleComponent, HeaderComponent, ShowAuthedDirective, SafeHtmlPipe,
-    FileUploadComponent, ErrorModalComponent, EditInlineComponent, CommentListComponent]
+    FileUploadComponent, ErrorModalComponent, EditInlineComponent, CommentListComponent, LoadingComponent]
 })
 export class SharedModule { }

@@ -18,6 +18,10 @@ const routes: Routes = [
     path: 'posts',
     loadChildren: './posts/posts.module#PostsModule'
   },
+  {
+    path: 'tags',
+    loadChildren: './tags/tags.module#TagsModule'
+  },
 ];
 
 @NgModule({

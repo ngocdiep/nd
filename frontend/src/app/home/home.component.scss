@@ -1,0 +1,26 @@
+@media only screen and (max-width: 1024px) {
+    .home {
+        width: 100%;
+        max-width: 1024px;
+        margin: 0 auto;
+        .tags {
+            max-height: 100px;
+        }
+    }
+}
+
+
+@media only screen and (min-width: 1024px) {
+    .home {
+        width: 100%;
+        max-width: 1024px;
+        margin: 0 auto;
+        display: flex;
+        .tags {
+            min-width: 300px;
+        }
+        .post-list {
+            width: 1024px - 300px;
+        }
+    }
+}

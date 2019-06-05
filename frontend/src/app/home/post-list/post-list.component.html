@@ -1,8 +1,13 @@
-<div>
-  <article *ngFor="let edge of postListPaging.edges">
-    <h2><a [routerLink]="['/posts/' + edge.node.id]" routerLinkActive="router-link-active">{{edge.node.title}}</a></h2>
-    <p [routerLink]="['/posts/' + edge.node.id]">{{edge.node.summary}}...</p>
-    <app-tag-list [tags]="edge.node.postTagsByPostId.nodes">
-    </app-tag-list>
-  </article>
+<div class="main" *ngIf="postList.loading; else showData">
+  <app-loading></app-loading>
 </div>
+<ng-template #showData>
+  <div class="main">
+    <article *ngFor="let edge of postList.data.edges">
+      <h2><a [routerLink]="['/posts/' + edge.node.id]" routerLinkActive="router-link-active">{{edge.node.title}}</a></h2>
+      <p [routerLink]="['/posts/' + edge.node.id]">{{edge.node.summary}}...</p>
+      <app-tag-list [tags]="edge.node.postTagsByPostId.nodes">
+      </app-tag-list>
+    </article>
+  </div>
+</ng-template>

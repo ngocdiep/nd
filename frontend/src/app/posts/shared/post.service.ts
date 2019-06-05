@@ -36,6 +36,36 @@ query ($offset: Int, $first: Int) {
         postTagsByPostId {
           nodes {
             tagByTagId {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      startCursor
+      endCursor
+    }
+  }
+}
+`;
+
+
+const getPageWithFilter = gql`
+query ($offset: Int, $first: Int, $tags: [String]) {
+  filterPostsByTags(offset: $offset, first: $first, tags: $tags) {
+    edges {
+      node {
+        id
+        title
+        summary
+        authorId
+        postTagsByPostId {
+          nodes {
+            tagByTagId {
               name
             }
           }
@@ -88,7 +118,14 @@ export class PostService {
     });
   }
 
-  getPage(paging) {
+  getPage(filteredTags: string[], paging) {
+    if (filteredTags.length > 0) {
+      return this.apollo.query({
+        query: getPageWithFilter,
+        variables: { offset: paging.offset, first: paging.first, tags:  filteredTags},
+        fetchPolicy: 'no-cache'
+      });
+    }
     return this.apollo.query({
       query: getPage,
       variables: { offset: paging.offset, first: paging.first },

@@ -8,6 +8,7 @@ body {
     font-size: 11pt;
     line-height: 1.4;
     background-color: #e9ebee;
+    min-width: 320px;
 }
 
 * {
@@ -19,4 +20,9 @@ body {
     background: #ffebe8;
     padding: 5px;
     margin: 10px 0;
+}
+
+router-outlet ~ * {
+    display: flex;
+    width: 100%;
 }

@@ -1,8 +1,6 @@
-div {
+.main {
     margin: 0 auto;
-    min-width: 480px;
-    max-width: 800px;
-
+    width: 100%;
     article {
         background-color: #ffffff;
         padding: 8px;
@@ -23,5 +21,8 @@ div {
         p {
             cursor: pointer;
         }
+    }
+    article:first-child {
+        margin-top: 0;
     }
 }

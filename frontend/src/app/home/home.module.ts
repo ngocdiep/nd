@@ -5,14 +5,15 @@ import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { PostListComponent } from './post-list/post-list.component';
 import { TagListComponent } from './post-list/tag-list/tag-list.component';
+import { TagsComponent } from './tags/tags.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
     HomeRoutingModule,
-    SharedModule
+    SharedModule,
   ],
-  declarations: [HomeComponent, PostListComponent, TagListComponent]
+  declarations: [HomeComponent, PostListComponent, TagListComponent, TagsComponent]
 })
 export class HomeModule { }

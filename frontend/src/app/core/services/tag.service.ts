@@ -11,7 +11,7 @@ export class TagService {
     private apollo: Apollo,
   ) { }
 
-  filter(pattern: string) {
+  filter(pattern?: string) {
     return this.apollo.query({
       query: gql`
       query {
