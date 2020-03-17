@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
     this.resetStatus();
     this.authService.authenticate(this.loginForm.value).subscribe(
       result => {
-        if (result.data.authenticate.jwtToken) {
+        if (result.data['authenticate'].jwtToken) {
           this.router.navigateByUrl('');
         } else {
           this.errors.push('Email or password is incorrect.');

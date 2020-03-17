@@ -4,23 +4,23 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: './home/home.module#HomeModule'
+    loadChildren: () => import('./home/home.module').then(mod => mod.HomeModule)
   },
   {
     path: 'auth',
-    loadChildren: './auth/auth.module#AuthModule'
+    loadChildren: () => import('./auth/auth.module').then(mod => mod.AuthModule)
   },
   {
     path: 'profile',
-    loadChildren: './profile/profile.module#ProfileModule'
+    loadChildren: () => import('./profile/profile.module').then(mod => mod.ProfileModule)
   },
   {
     path: 'posts',
-    loadChildren: './posts/posts.module#PostsModule'
+    loadChildren: () => import('./posts/posts.module').then(mod => mod.PostsModule)
   },
   {
     path: 'tags',
-    loadChildren: './tags/tags.module#TagsModule'
+    loadChildren: () => import('./tags/tags.module').then(mod => mod.TagsModule)
   },
 ];
 

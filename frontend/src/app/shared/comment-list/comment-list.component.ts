@@ -25,7 +25,7 @@ export class CommentListComponent implements OnInit {
   constructor(
     private postService: PostService,
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    public authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -51,7 +51,7 @@ export class CommentListComponent implements OnInit {
     this.postService.addReply(this.authService.currentUserSubject.getValue().id, this.postId, commentId, this.form[commentId].value)
       .subscribe(result => {
         const newReply = {
-          id: result.data.createPostComment.postComment.id, content: this.form[commentId].value.content, parentId: commentId,
+          id: result.data['createPostComment'].postComment.id, content: this.form[commentId].value.content, parentId: commentId,
           postCommentsByParentId: {
             totalCount: 0,
             pageInfo: {

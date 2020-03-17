@@ -27,7 +27,7 @@ export class DetailComponent implements OnInit {
     private route: ActivatedRoute,
     private postService: PostService,
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    public authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -65,7 +65,7 @@ export class DetailComponent implements OnInit {
     this.postService.addComment(this.authService.currentUserSubject.getValue().id, this.postId, this.form.value)
       .subscribe(result => {
         this.comments.nodes.splice(0, 0, {
-          id: result.data.createPostComment.postComment.id, content: this.form.value.content, parentId: null, postCommentsByParentId: {
+          id: result.data['createPostComment'].postComment.id, content: this.form.value.content, parentId: null, postCommentsByParentId: {
             totalCount: 0,
             pageInfo: {
               hasNextPage: false,

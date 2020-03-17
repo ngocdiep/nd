@@ -61,8 +61,8 @@ export class AuthService {
         password: input.password
       }
     }).pipe(map(result => {
-      if (result.data && result.data.registerPersonAndSignIn) {
-        this.tokenService.saveToken(result.data.registerPersonAndSignIn.jwtToken);
+      if (result.data && result.data['registerPersonAndSignIn']) {
+        this.tokenService.saveToken(result.data['registerPersonAndSignIn'].jwtToken);
         this.setCurrentUser();
       }
       return result;
@@ -78,8 +78,8 @@ export class AuthService {
         password: input.password
       }
     }).pipe(map(result => {
-      if (result.data.authenticate.jwtToken) {
-        this.tokenService.saveToken(result.data.authenticate.jwtToken);
+      if (result.data['authenticate'].jwtToken) {
+        this.tokenService.saveToken(result.data['authenticate'].jwtToken);
         this.setCurrentUser();
       }
       return result;

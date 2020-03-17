@@ -8,6 +8,7 @@ import { GraphQLModule } from './graphql.module';
 import { ErrorModalComponent } from './shared/error-modal/error-modal.component';
 import { SampleComponent } from './shared/sample/sample.component';
 import { SharedModule } from './shared/shared.module';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { SharedModule } from './shared/shared.module';
     GraphQLModule,
     HttpClientModule,
     CoreModule,
-    SharedModule
+    SharedModule,
+    QuillModule.forRoot()
   ],
   providers: [],
   entryComponents: [
