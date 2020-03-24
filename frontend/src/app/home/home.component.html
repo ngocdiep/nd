@@ -1,8 +1,8 @@
 <div class="home">
   <div class="tags">
-    <app-tags (tagsAdded)="onTagsAdded($event)"></app-tags>
+    <app-tags [form]="formFilter" (tagSelected)="onTagSelected($event)"></app-tags>
   </div>
   <div class="post-list">
-    <app-post-list [postList]="postList" style="width: 100%;"></app-post-list>
+    <app-post-list [postList]="postList" style="width: 100%;" (tagSelected)="onTagFilterSelected($event)"></app-post-list>
   </div>
 </div>

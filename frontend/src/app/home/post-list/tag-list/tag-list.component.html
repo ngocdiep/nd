@@ -1,5 +1,5 @@
 <div>
-  <a *ngFor="let tag of tags" [routerLink]="['tags', tag.tagByTagId.name]" routerLinkActive="router-link-active">
+  <a *ngFor="let tag of tags" (click)="onSelect(tag.tagByTagId.name)" [routerLink]="['/posts']" [queryParams]="{tag: tag.tagByTagId.name}">
     {{tag.tagByTagId.name}}
   </a>
 </div>

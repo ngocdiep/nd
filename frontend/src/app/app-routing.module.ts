@@ -7,6 +7,10 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then(mod => mod.HomeModule)
   },
   {
+    path: 'posts',
+    loadChildren: () => import('./home/home.module').then(mod => mod.HomeModule)
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(mod => mod.AuthModule)
   },
@@ -21,7 +25,7 @@ const routes: Routes = [
   {
     path: 'tags',
     loadChildren: () => import('./tags/tags.module').then(mod => mod.TagsModule)
-  },
+  }
 ];
 
 @NgModule({

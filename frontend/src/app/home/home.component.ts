@@ -4,6 +4,7 @@ import { Paging } from '../core';
 import { PostService } from '../posts/shared/post.service';
 import { PostList } from './shared';
 import { finalize } from 'rxjs/operators';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,9 @@ export class HomeComponent implements OnInit {
     first: 10
   };
 
-  filteredTags: string[] = [];
+  formFilter: FormGroup = new FormGroup({
+    filteredTags: new FormControl([]),
+  });
 
   postList: PostList = {};
 
@@ -27,10 +30,30 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (localStorage.getItem('filteredTags')) {
+      this.filteredTagsFC.setValue(JSON.parse(localStorage.getItem('filteredTags')));
+    }
+
     this.getPosts();
-    this.activatedRoute.params.subscribe(p => {
+    this.activatedRoute.queryParams.subscribe(p => {
       console.log(p);
     });
+    this.filteredTagsFC.valueChanges.subscribe(filteredTags => {
+      localStorage.setItem('filteredTags', JSON.stringify(filteredTags));
+      this.getPosts();
+    });
+  }
+
+  get filteredTags() {
+    let filteredTags: { display: string; value: string }[] = this.filteredTagsFC.value;
+
+    let tags = [];
+
+    filteredTags.forEach(tag => {
+      tags.push(tag.value);
+    });
+
+    return tags;
   }
 
   getPosts() {
@@ -42,7 +65,7 @@ export class HomeComponent implements OnInit {
         this.postList.data = result.data['filterPostsByTags'];
       });
     } else {
-      this.postService.getPage([], this.paging).pipe(
+      this.postService.getPage(this.filteredTags, this.paging).pipe(
         finalize(() => this.postList.loading = false)
       ).subscribe(result => {
         this.postList.data = result.data['allPosts'];
@@ -50,9 +73,37 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onTagsAdded(filteredTags) {
-    this.filteredTags = filteredTags;
-    this.getPosts();
+  onTagSelected(tag: string) {
+    let filteredTags: { display: string; value: string }[] = this.filteredTagsFC.value;
+    let isExisted = false;
+    filteredTags.forEach(tagInput => {
+      if (tagInput.value === tag) {
+        isExisted = true;
+        return;
+      }
+    });
+    if (!isExisted) {
+      let filteredTag = this.filteredTagsFC.value;
+      filteredTag.push({ display: tag, value: tag });
+      this.filteredTagsFC.setValue(filteredTag);
+    }
   }
 
+  onTagFilterSelected(tag: string) {
+    let filteredTags: { display: string; value: string }[] = this.filteredTagsFC.value;
+    let isExisted = false;
+    filteredTags.forEach(tagInput => {
+      if (tagInput.value === tag) {
+        isExisted = true;
+        return;
+      }
+    });
+    if (!isExisted) {
+      let filteredTag = this.filteredTagsFC.value;
+      filteredTag.push({ display: tag, value: tag });
+      this.filteredTagsFC.setValue(filteredTag);
+    }
+  }
+
+  private get filteredTagsFC() { return this.formFilter.get('filteredTags') }
 }

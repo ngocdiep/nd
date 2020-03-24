@@ -1,5 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { PostList } from '../shared';
 
 
@@ -11,10 +10,14 @@ import { PostList } from '../shared';
 export class PostListComponent implements OnInit {
 
   @Input() postList: PostList;
+  @Output() tagSelected: EventEmitter<string> = new EventEmitter<string>();
+
   constructor() { }
 
   ngOnInit() {
-    console.log('data: ', this.postList);
   }
 
+  onTagSelected(tag: string) {
+    this.tagSelected.emit(tag);
+  }
 }
