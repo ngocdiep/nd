@@ -3,6 +3,7 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/shared/auth.service';
+import { QueryParams } from 'src/app/home/query-params';
 
 const createPost = gql`
 mutation ($title: String!, $content: String, $summary: String, $authorId: Int!, $tags: [String!]!) {
@@ -118,17 +119,17 @@ export class PostService {
     });
   }
 
-  getPage(filteredTags: string[], paging) {
-    if (filteredTags.length > 0) {
+  getPage(queryParams: QueryParams) {
+    if (queryParams.tag) {
       return this.apollo.query({
         query: getPageWithFilter,
-        variables: { offset: paging.offset, first: paging.first, tags:  filteredTags},
+        variables: { offset: queryParams.page * queryParams.limit, first: queryParams.limit, tags:  [queryParams.tag]},
         fetchPolicy: 'no-cache'
       });
     }
     return this.apollo.query({
       query: getPage,
-      variables: { offset: paging.offset, first: paging.first },
+      variables: { offset: queryParams.page * queryParams.limit, first: queryParams.limit },
       fetchPolicy: 'no-cache'
     });
   }

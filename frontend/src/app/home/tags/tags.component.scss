@@ -7,10 +7,12 @@
     }
     text-align: center;
     .tag-list {
+        display: flex;
+        flex-wrap: wrap;
         margin: 8px;
         a {
-            padding: .4em .5em;
-            margin: 2px 2px 2px 0;
+            padding: 0.4em;
+            margin: 2px;
             color: #39739d;
             background-color: #E1ECF4;
             border-color: #E1ECF4;
@@ -21,6 +23,10 @@
             border-radius: 3px;
             transition: all .15s ease-in-out;
             cursor: pointer;
+        }
+        a.selected-tag {
+            color: #ffffff;
+            background-color: #2a86ca;
         }
         
     }

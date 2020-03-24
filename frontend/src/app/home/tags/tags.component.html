@@ -1,15 +1,11 @@
 <div class="main">
   <p class="title">Tags</p>
   <div class="filter-tags">
-    <form [formGroup]="form">
-      <tag-input [placeholder]="'Filter Tags...'" [onlyFromAutocomplete]="true" formControlName='filteredTags' style="width: 100%">
-        <tag-input-dropdown [autocompleteItems]='autocompleteItems'>
-        </tag-input-dropdown>
-      </tag-input>
+    <form>
     </form>
   </div>
   <div class="tag-list">
-    <a *ngFor="let tag of allTags" (click)="onSelect(tag.name)">
+    <a *ngFor="let tag of allTags" [routerLink]="['']" [queryParams]="{tag: tag.name}" [ngClass]="{'selected-tag': tag.name === selectedTag}">
       {{ tag.name }}
     </a>
   </div>

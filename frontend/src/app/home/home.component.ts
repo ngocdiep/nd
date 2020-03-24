@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Paging } from '../core';
-import { PostService } from '../posts/shared/post.service';
-import { PostList } from './shared';
 import { finalize } from 'rxjs/operators';
-import { FormGroup, FormControl } from '@angular/forms';
+import { PostService } from '../posts/shared/post.service';
+import { QueryParams } from './query-params';
+import { PostList } from './shared';
 
 @Component({
   selector: 'app-home',
@@ -13,13 +13,13 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class HomeComponent implements OnInit {
 
-  paging: Paging = {
-    offset: 0,
-    first: 10
+  queryParams: QueryParams = {
+    page: 0,
+    limit: 10
   };
 
   formFilter: FormGroup = new FormGroup({
-    filteredTags: new FormControl([]),
+    filteredTag: new FormControl(),
   });
 
   postList: PostList = {};
@@ -30,42 +30,23 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (localStorage.getItem('filteredTags')) {
-      this.filteredTagsFC.setValue(JSON.parse(localStorage.getItem('filteredTags')));
-    }
-
-    this.getPosts();
     this.activatedRoute.queryParams.subscribe(p => {
-      console.log(p);
-    });
-    this.filteredTagsFC.valueChanges.subscribe(filteredTags => {
-      localStorage.setItem('filteredTags', JSON.stringify(filteredTags));
+      this.queryParams = p;
       this.getPosts();
     });
   }
 
-  get filteredTags() {
-    let filteredTags: { display: string; value: string }[] = this.filteredTagsFC.value;
-
-    let tags = [];
-
-    filteredTags.forEach(tag => {
-      tags.push(tag.value);
-    });
-
-    return tags;
-  }
 
   getPosts() {
     this.postList.loading = true;
-    if (this.filteredTags.length > 0) {
-      this.postService.getPage(this.filteredTags, this.paging).pipe(
+    if (this.queryParams.tag) {
+      this.postService.getPage(this.queryParams).pipe(
         finalize(() => this.postList.loading = false)
       ).subscribe(result => {
         this.postList.data = result.data['filterPostsByTags'];
       });
     } else {
-      this.postService.getPage(this.filteredTags, this.paging).pipe(
+      this.postService.getPage(this.queryParams).pipe(
         finalize(() => this.postList.loading = false)
       ).subscribe(result => {
         this.postList.data = result.data['allPosts'];
@@ -73,37 +54,4 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onTagSelected(tag: string) {
-    let filteredTags: { display: string; value: string }[] = this.filteredTagsFC.value;
-    let isExisted = false;
-    filteredTags.forEach(tagInput => {
-      if (tagInput.value === tag) {
-        isExisted = true;
-        return;
-      }
-    });
-    if (!isExisted) {
-      let filteredTag = this.filteredTagsFC.value;
-      filteredTag.push({ display: tag, value: tag });
-      this.filteredTagsFC.setValue(filteredTag);
-    }
-  }
-
-  onTagFilterSelected(tag: string) {
-    let filteredTags: { display: string; value: string }[] = this.filteredTagsFC.value;
-    let isExisted = false;
-    filteredTags.forEach(tagInput => {
-      if (tagInput.value === tag) {
-        isExisted = true;
-        return;
-      }
-    });
-    if (!isExisted) {
-      let filteredTag = this.filteredTagsFC.value;
-      filteredTag.push({ display: tag, value: tag });
-      this.filteredTagsFC.setValue(filteredTag);
-    }
-  }
-
-  private get filteredTagsFC() { return this.formFilter.get('filteredTags') }
 }
