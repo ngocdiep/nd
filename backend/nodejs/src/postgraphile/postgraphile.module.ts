@@ -3,12 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { PoolConfig } from 'pg';
 import postgraphile from 'postgraphile';
-import { ConfigModule } from '../config.module';
-import { ConfigService } from '../config.service';
 const UPLOAD_DIR_NAME = 'storage/files';
 
 @Module({
-    imports: [ConfigModule],
+    imports: [],
     providers: [],
     controllers: [
     ],
@@ -16,14 +14,13 @@ const UPLOAD_DIR_NAME = 'storage/files';
 })
 export class PostgraphileModule implements NestModule {
     constructor(
-        private configService: ConfigService,
     ) { }
     public configure(consumer: MiddlewareConsumer) {
         const poolConfig: PoolConfig = {
-            user: this.configService.get('DATABASE_USER'),
-            password: this.configService.get('DATABASE_PASSWORD'),
-            database: this.configService.get('DATABASE_NAME'),
-            host: this.configService.get('DATABASE_HOST'),
+            host: process.env.DATABASE_HOST,
+            database: process.env.DATABASE_NAME,
+            user: process.env.DATABASE_USER,
+            password: process.env.DATABASE_PASSWORD,
         };
         const PostGraphileUploadFieldPlugin = require('postgraphile-plugin-upload-field');
         const ConnectionFilterPlugin = require('postgraphile-plugin-connection-filter');
